@@ -67,8 +67,8 @@ asm=next(p for p in libraries if p.name.startswith('asm-'))
 dest=TOOLS/'asm.jar'
 if dest.is_symlink():dest.unlink()
 shutil.copy2(asm,dest)
-url='https://repo.md-5.net/content/repositories/releases/net/md-5/SpecialSource/1.7.4/SpecialSource-1.7.4-shaded.jar'
-get(url,TOOLS/'specialsource.jar')
+url='https://repo.maven.apache.org/maven2/net/md-5/SpecialSource/1.7.4/SpecialSource-1.7.4-shaded.jar'
+get(url,TOOLS/'specialsource.jar','bec6091d89d47fb7b504045d87b19dfd50b4f7bea15b33adf522848127f7cdd2','sha256')
 mouse_url='https://media.forgecdn.net/files/2287/384/MouseTweaks-2.6.2-mc1.8.9.jar'
 get(mouse_url,TOOLS/'mousetweaks.jar')
 for slug,vid,name in [('patcher','iNjGeSxM','patcher.jar'),('hypixel-mod-api','VtDhN4ZW','hypixel-mod-api.jar')]:

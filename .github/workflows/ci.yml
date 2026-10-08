@@ -6,6 +6,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: ttro-ci-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
 jobs:
   client:
     runs-on: ubuntu-24.04

@@ -36,7 +36,7 @@ Section "Ttro Client" SEC_CLIENT
  CreateShortcut "$SMPROGRAMS\Ttro Client\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\TtroClient" "DisplayName" "Ttro Client ${VERSION}"
  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\TtroClient" "DisplayVersion" "${VERSION}"
- WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\TtroClient" "UninstallString" '$"$INSTDIR\Uninstall.exe$"'
+ WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\TtroClient" "UninstallString" '"$INSTDIR\Uninstall.exe"'
  WriteRegDWORD HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\TtroClient" "NoModify" 1
  WriteRegDWORD HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\TtroClient" "NoRepair" 1
 SectionEnd
@@ -44,7 +44,7 @@ Function .onInstSuccess
  ${GetParameters} $Args
  ${GetOptions} $Args "/RESTART" $Restart
  IfErrors done
- Exec '$"$INSTDIR\TtroClient.exe$"'
+ Exec '"$INSTDIR\TtroClient.exe"'
  done:
 FunctionEnd
 Section "Uninstall"

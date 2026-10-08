@@ -11,6 +11,9 @@ $profileStore = Join-Path $env:LOCALAPPDATA 'TtroClient189/native/launcher.json'
 $hash = (Get-FileHash $profileStore).Hash
 $p = Start-Process -FilePath (Join-Path $root 'Uninstall.exe') -ArgumentList '/S' -PassThru
 if (!$p.WaitForExit(30000) -or $p.ExitCode -ne 0) { throw 'Uninstaller failed' }
+# NSIS normally starts a temporary child uninstaller; wait for its real effect.
+$deadline = [DateTime]::UtcNow.AddSeconds(30)
+while ((Test-Path $launcher) -and [DateTime]::UtcNow -lt $deadline) { Start-Sleep -Milliseconds 200 }
 if (Test-Path $launcher) { throw 'Uninstaller retained installed launcher' }
 if (!(Test-Path $profileStore) -or (Get-FileHash $profileStore).Hash -ne $hash) { throw 'Uninstaller changed profile store' }
 Write-Host 'PASS uninstall preserves profiles and removes program files'

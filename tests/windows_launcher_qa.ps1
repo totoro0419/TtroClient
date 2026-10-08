@@ -33,7 +33,7 @@ try {
  $tune = FindName 'TUNE'; $tune.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
  (FindId 'ModuleSearch').GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue('Crosshair')
  Start-Sleep -Milliseconds 300
- $toggle = FindName 'Enable Crosshair'; Check ($null -ne $toggle) 'context module setting is keyboard accessible'
+ $toggle = FindName 'Enable Crosshair'; Check ($null -ne $toggle) 'context module exposes native automation semantics'
  $toggle.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern).Toggle()
  Start-Sleep -Milliseconds 300
  $state = Get-Content -Raw $data | ConvertFrom-Json
