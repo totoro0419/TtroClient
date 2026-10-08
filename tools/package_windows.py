@@ -12,7 +12,7 @@ assert product['version'] in manifest['filename'], 'Stale client payload'
 for license in ('LICENSE','THIRD_PARTY.md'):
  assert (portable/license).exists(), 'Distribution notice missing: '+license
 flag='/D' if os.name=='nt' else '-D'
-subprocess.run([args.makensis,flag+'VERSION='+product['version'],flag+'PAYLOAD='+str(portable),flag+'OUTPUT='+str(root/'dist/TtroClient-Setup.exe'),str(root/'installer/TtroClient.nsi')],check=True)
+subprocess.run([args.makensis,flag+'VERSION='+product['version'],flag+'PAYLOAD_FILES='+str(portable/'*'),flag+'OUTPUT='+str(root/'dist/TtroClient-Setup.exe'),str(root/'installer/TtroClient.nsi')],check=True)
 shutil.make_archive(str(root/'dist/TtroClient-Portable'),'zip',portable)
 shutil.copy2(client,root/'dist'/client.name)
 files=[root/'dist/TtroClient-Setup.exe',root/'dist/TtroClient-Portable.zip',root/'dist'/client.name]

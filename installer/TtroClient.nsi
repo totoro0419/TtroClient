@@ -4,8 +4,8 @@ Unicode True
 !ifndef VERSION
  !define VERSION "0.3.0-alpha.1"
 !endif
-!ifndef PAYLOAD
- !define PAYLOAD "../dist/portable"
+!ifndef PAYLOAD_FILES
+ !define PAYLOAD_FILES "../dist/portable/*"
 !endif
 !ifndef OUTPUT
  !define OUTPUT "../dist/TtroClient-Setup.exe"
@@ -29,7 +29,7 @@ Var Args
 Var Restart
 Section "Ttro Client" SEC_CLIENT
  SetOutPath "$INSTDIR"
- File /r "${PAYLOAD}/*"
+ File /r "${PAYLOAD_FILES}"
  WriteUninstaller "$INSTDIR\Uninstall.exe"
  CreateDirectory "$SMPROGRAMS\Ttro Client"
  CreateShortcut "$SMPROGRAMS\Ttro Client\Ttro Client.lnk" "$INSTDIR\TtroClient.exe"

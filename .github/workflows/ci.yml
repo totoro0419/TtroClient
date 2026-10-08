@@ -48,6 +48,9 @@ jobs:
           python tools/native_notices.py
       - name: Self-contained Windows launcher
         run: dotnet publish launcher/native/Ttro.Launcher/Ttro.Launcher.csproj -c Release -r win-x64 --self-contained true -o dist/portable
+      - name: Native Windows UI smoke
+        shell: pwsh
+        run: ./tests/windows_launcher_qa.ps1
       - name: Package installer
         shell: pwsh
         run: |
@@ -61,6 +64,7 @@ jobs:
             dist/TtroClient-Portable.zip
             dist/checksums.txt
             dist/ttro-client-1.8.9-*.jar
+            research/windows-ui-smoke.json
           if-no-files-found: error
   web:
     runs-on: ubuntu-24.04
