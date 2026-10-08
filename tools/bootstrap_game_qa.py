@@ -69,8 +69,8 @@ if dest.is_symlink():dest.unlink()
 shutil.copy2(asm,dest)
 url='https://repo.maven.apache.org/maven2/net/md-5/SpecialSource/1.7.4/SpecialSource-1.7.4-shaded.jar'
 get(url,TOOLS/'specialsource.jar','bec6091d89d47fb7b504045d87b19dfd50b4f7bea15b33adf522848127f7cdd2','sha256')
-mouse_url='https://media.forgecdn.net/files/2287/384/MouseTweaks-2.6.2-mc1.8.9.jar'
-get(mouse_url,TOOLS/'mousetweaks.jar')
+mouse_url='https://edge.forgecdn.net/files/2287/384/MouseTweaks-2.6.2-mc1.8.9.jar'
+get(mouse_url,TOOLS/'mousetweaks.jar','5ac93656e71f1a7f38327b70e508249932d2d076ef139635dd6dcad502b21faa','sha256')
 for slug,vid,name in [('patcher','iNjGeSxM','patcher.jar'),('hypixel-mod-api','VtDhN4ZW','hypixel-mod-api.jar')]:
  v=json.load(open_url('https://api.modrinth.com/v2/version/'+vid,30));f=next(f for f in v['files'] if f['primary']);get(f['url'],TOOLS/name,f['hashes']['sha512'],'sha512')
 metadata=json.loads((ROOT/'research/archive-alpha2/external-stack-result.json').read_text())['official_cache_metadata']

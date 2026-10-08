@@ -74,7 +74,9 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: TtroClient-QA-windows
-          path: research/windows-*-smoke.json
+          path: |
+            research/windows-*-smoke.json
+            research/windows-context.png
           if-no-files-found: error
   game:
     runs-on: ubuntu-24.04

@@ -2,6 +2,8 @@ param([string]$LauncherPath = (Join-Path $PSScriptRoot '../dist/portable/TtroCli
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName UIAutomationClient
 Add-Type -AssemblyName UIAutomationTypes
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
 $exe = $LauncherPath
 $process = Start-Process -FilePath $exe -PassThru
 $checks = @()
@@ -34,11 +36,23 @@ try {
  (FindId 'ModuleSearch').GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue('Crosshair')
  Start-Sleep -Milliseconds 300
  $toggle = FindName 'Enable Crosshair'; Check ($null -ne $toggle) 'context module exposes native automation semantics'
- $toggle.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern).Toggle()
+ $toggle.SetFocus()
+ [System.Windows.Forms.SendKeys]::SendWait(' ')
+ Start-Sleep -Milliseconds 300
+ Check ($toggle.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern).Current.ToggleState -eq [System.Windows.Automation.ToggleState]::Off) 'keyboard Space toggles native module'
+ # Ctrl+K must reach the purpose search from the context controls.
+ [System.Windows.Forms.SendKeys]::SendWait('^k')
+ Start-Sleep -Milliseconds 300
+ Check ((FindId 'ModuleSearch').Current.HasKeyboardFocus) 'keyboard Ctrl+K reaches module search'
  Start-Sleep -Milliseconds 300
  $state = Get-Content -Raw $data | ConvertFrom-Json
  $config = Get-Content -Raw (Join-Path $env:LOCALAPPDATA "TtroClient189/native/profiles/$($state.Selected)/config/ttro-client.json") | ConvertFrom-Json
  Check (!$config.modules.crosshair.enabled) 'native module toggle persists OFF'
+ New-Item -ItemType Directory -Force (Join-Path $PSScriptRoot '../research') | Out-Null
+ $bounds = $window.Current.BoundingRectangle
+ $bitmap = [System.Drawing.Bitmap]::new([int]$bounds.Width,[int]$bounds.Height)
+ $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+ try { $graphics.CopyFromScreen([int]$bounds.X,[int]$bounds.Y,0,0,$bitmap.Size); $bitmap.Save((Join-Path $PSScriptRoot '../research/windows-context.png')) } finally { $graphics.Dispose(); $bitmap.Dispose() }
  $process.CloseMainWindow() | Out-Null
  Check ($process.WaitForExit(5000)) 'native launcher closes normally'
  New-Item -ItemType Directory -Force (Join-Path $PSScriptRoot '../research') | Out-Null
