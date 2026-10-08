@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>TtroClient</AssemblyName>
+    <Version>0.3.0-alpha.1</Version>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Ttro.Launcher.Core/Ttro.Launcher.Core.csproj" />
+    <Content Include="../../modules.json" Link="modules.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../product.json" Link="product.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../payload/*.jar" Link="payload/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../payload/client-manifest.json" Link="payload/client-manifest.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../../LICENSE" Link="LICENSE" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../../THIRD_PARTY.md" Link="THIRD_PARTY.md" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../licenses/*" Link="licenses/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="launcher-settings.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

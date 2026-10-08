@@ -1,0 +1,835 @@
+[
+  {
+    "id": "fps",
+    "name": "FPS",
+    "group": "HUD",
+    "status": "implemented",
+    "default": true,
+    "settings": {},
+    "provider": "Ttro Client",
+    "safety": "cosmetic",
+    "note": ""
+  },
+  {
+    "id": "ping",
+    "name": "Ping",
+    "group": "HUD",
+    "status": "implemented",
+    "default": true,
+    "settings": {},
+    "provider": "Ttro Client",
+    "safety": "cosmetic",
+    "note": ""
+  },
+  {
+    "id": "cps",
+    "name": "CPS L/R",
+    "group": "HUD",
+    "status": "implemented",
+    "default": true,
+    "settings": {},
+    "provider": "Ttro Client",
+    "safety": "cosmetic",
+    "note": ""
+  },
+  {
+    "id": "keystrokes",
+    "name": "Keystrokes",
+    "group": "HUD",
+    "status": "implemented",
+    "default": true,
+    "settings": {},
+    "provider": "Ttro Client",
+    "safety": "cosmetic",
+    "note": ""
+  },
+  {
+    "id": "bps",
+    "name": "BPS",
+    "group": "HUD",
+    "status": "implemented",
+    "default": false,
+    "settings": {},
+    "provider": "Ttro Client",
+    "safety": "cosmetic",
+    "note": ""
+  },
+  {
+    "id": "coordinates",
+    "name": "Coordinates",
+    "group": "HUD",
+    "status": "implemented",
+    "default": false,
+    "settings": {},
+    "provider": "Ttro Client",
+    "safety": "cosmetic",
+    "note": ""
+  },
+  {
+    "id": "memory",
+    "name": "Memory",
+    "group": "HUD",
+    "status": "implemented",
+    "default": false,
+    "settings": {},
+    "provider": "Ttro Client",
+    "safety": "cosmetic",
+    "note": ""
+  },
+  {
+    "id": "armor",
+    "name": "Armor & Durability",
+    "group": "HUD",
+    "status": "implemented",
+    "default": true,
+    "settings": {},
+    "provider": "Ttro Client",
+    "safety": "cosmetic",
+    "note": ""
+  },
+  {
+    "id": "potions",
+    "name": "Potion Effects",
+    "group": "HUD",
+    "status": "implemented",
+    "default": true,
+    "settings": {},
+    "provider": "Ttro Client",
+    "safety": "cosmetic",
+    "note": ""
+  },
+  {
+    "id": "items",
+    "name": "Item Counters",
+    "group": "HUD",
+    "status": "implemented",
+    "default": false,
+    "settings": {},
+    "provider": "Ttro Client",
+    "safety": "cosmetic",
+    "note": ""
+  },
+  {
+    "id": "clock",
+    "name": "Clock",
+    "group": "HUD",
+    "status": "implemented",
+    "default": false,
+    "settings": {},
+    "provider": "Ttro Client",
+    "safety": "cosmetic",
+    "note": ""
+  },
+  {
+    "id": "connection",
+    "name": "Connection Quality",
+    "group": "HUD",
+    "status": "implemented",
+    "default": false,
+    "settings": {
+      "window": {
+        "type": "number",
+        "default": 40,
+        "min": 10,
+        "max": 120
+      }
+    },
+    "provider": "Ttro Client",
+    "safety": "cosmetic",
+    "note": "サーバーから通知されたtablist latencyの変化を分析。実RTT測定とは異なります。"
+  },
+  {
+    "id": "adaptivehud",
+    "name": "Adaptive HUD",
+    "group": "HUD",
+    "status": "implemented",
+    "default": true,
+    "settings": {
+      "combatFocus": {
+        "type": "boolean",
+        "default": true
+      }
+    },
+    "provider": "Ttro Client",
+    "safety": "cosmetic",
+    "note": ""
+  },
+  {
+    "id": "crosshair",
+    "name": "Crosshair",
+    "group": "PvP",
+    "status": "implemented",
+    "default": true,
+    "settings": {
+      "size": {
+        "type": "number",
+        "default": 5,
+        "min": 1,
+        "max": 20
+      },
+      "gap": {
+        "type": "number",
+        "default": 3,
+        "min": 0,
+        "max": 16
+      },
+      "shape": {
+        "type": "select",
+        "default": "cross",
+        "options": [
+          "cross",
+          "dot",
+          "t"
+        ]
+      },
+      "target": {
+        "type": "boolean",
+        "default": false
+      }
+    },
+    "provider": "Ttro Client",
+    "safety": "cosmetic",
+    "note": "TargetはVanillaが指しているobjectMouseOverのみ。"
+  },
+  {
+    "id": "zoom",
+    "name": "Zoom",
+    "group": "PvP",
+    "status": "implemented",
+    "default": false,
+    "settings": {
+      "factor": {
+        "type": "number",
+        "default": 3,
+        "min": 1.5,
+        "max": 8
+      }
+    },
+    "provider": "Ttro Client",
+    "safety": "cosmetic",
+    "note": "Cキーを押している間だけ表示倍率を変更。"
+  },
+  {
+    "id": "togglesprint",
+    "name": "Toggle Sprint",
+    "group": "PvP",
+    "status": "implemented",
+    "default": false,
+    "settings": {},
+    "provider": "Ttro Client",
+    "safety": "uncertain",
+    "note": "利用者のキー操作による切替。Hypixelでは許可を断定せず制限。"
+  },
+  {
+    "id": "togglesneak",
+    "name": "Toggle Sneak",
+    "group": "PvP",
+    "status": "candidate",
+    "default": false,
+    "settings": {},
+    "provider": "Ttro Client",
+    "safety": "uncertain",
+    "note": ""
+  },
+  {
+    "id": "combo",
+    "name": "Combo Counter",
+    "group": "HUD",
+    "status": "candidate",
+    "default": false,
+    "settings": {},
+    "provider": "Ttro Client",
+    "safety": "uncertain",
+    "note": "AttackEntityEventは命中確定ではないため、クリック回数をComboと偽って表示しない。"
+  },
+  {
+    "id": "reach",
+    "name": "Reach Display",
+    "group": "HUD",
+    "status": "candidate",
+    "default": false,
+    "settings": {},
+    "provider": "Ttro Client",
+    "safety": "restricted",
+    "note": "Hypixel公式規約のplayer distance/rangeにより制限。"
+  },
+  {
+    "id": "cooldown",
+    "name": "Attack Cooldown representation",
+    "group": "PvP",
+    "status": "candidate",
+    "default": false,
+    "settings": {},
+    "provider": "Ttro Client",
+    "safety": "cosmetic",
+    "note": "1.8.9には1.9式attack cooldownがない。攻撃速度を捏造しない。"
+  },
+  {
+    "id": "headfx",
+    "name": "HeadFX",
+    "group": "Original",
+    "status": "implemented",
+    "default": true,
+    "settings": {
+      "preset": {
+        "type": "select",
+        "default": "Competitive",
+        "options": [
+          "Competitive",
+          "Clean",
+          "Glow",
+          "OFF"
+        ]
+      },
+      "threeD": {
+        "type": "boolean",
+        "default": false
+      }
+    },
+    "provider": "Ttro Client",
+    "safety": "cosmetic",
+    "note": "1.8.9 skull metadata=3。Inventory/hotbarにのみ装飾。 Optional 3DはVanillaの3D skull modelを拡大・傾斜する表示。独自skin modelではありません。"
+  },
+  {
+    "id": "scoreboard",
+    "name": "Smart Scoreboard",
+    "group": "Original",
+    "status": "implemented",
+    "default": false,
+    "settings": {
+      "adaptive": {
+        "type": "boolean",
+        "default": true
+      }
+    },
+    "provider": "Ttro Client",
+    "safety": "cosmetic",
+    "note": "既知の英語Bed Wars schemaを完全に解釈した場合だけ再構成。不明行はVanilla表示。"
+  },
+  {
+    "id": "identity",
+    "name": "Player Identity Capsule",
+    "group": "Original",
+    "status": "implemented",
+    "default": false,
+    "settings": {},
+    "provider": "Ttro Client",
+    "safety": "cosmetic",
+    "note": "通常受信した名前とteam prefixのみ。外部レベル未取得・推測しない。"
+  },
+  {
+    "id": "inventory",
+    "name": "Inventory Controls",
+    "group": "Inventory",
+    "status": "implemented",
+    "default": true,
+    "settings": {
+      "rightDrag": {
+        "type": "boolean",
+        "default": true
+      },
+      "leftCollect": {
+        "type": "boolean",
+        "default": true
+      },
+      "shiftDrag": {
+        "type": "boolean",
+        "default": true
+      },
+      "wheel": {
+        "type": "boolean",
+        "default": true
+      },
+      "scrollDirection": {
+        "type": "select",
+        "default": "Normal",
+        "options": [
+          "Normal",
+          "Reverse"
+        ]
+      },
+      "searchDirection": {
+        "type": "select",
+        "default": "Last to first",
+        "options": [
+          "Last to first",
+          "First to last"
+        ]
+      }
+    },
+    "provider": "Mouse Tweaks 2.6.2 / BSD",
+    "safety": "uncertain",
+    "note": "1.8.9版ソースを保持。独立ON/OFFと方向設定だけ拡張。Hypixelでは安全側に制限。"
+  },
+  {
+    "id": "mousedelay",
+    "name": "Mouse Delay Fix",
+    "group": "Input Foundation",
+    "status": "external",
+    "default": true,
+    "settings": {},
+    "provider": "PolyPatcher",
+    "safety": "review",
+    "note": "PolyPatcher 1.10.4の常設Mixin修正。基盤として導入時に有効。個別ON/OFFは提供しません。",
+    "requires": "patcher",
+    "control": "foundation"
+  },
+  {
+    "id": "mousebind",
+    "name": "Mouse Bind Fix",
+    "group": "Input Foundation",
+    "status": "external",
+    "default": true,
+    "settings": {},
+    "provider": "PolyPatcher",
+    "safety": "review",
+    "note": "PolyPatcher 1.10.4の常設Mixin修正。基盤として導入時に有効。個別ON/OFFは提供しません。",
+    "requires": "patcher",
+    "control": "foundation"
+  },
+  {
+    "id": "inputfix",
+    "name": "Input Fix / Foreign Keyboard",
+    "group": "Input Foundation",
+    "status": "external",
+    "default": true,
+    "settings": {
+      "layout": {
+        "type": "select",
+        "default": "QWERTY",
+        "options": [
+          "QWERTY",
+          "BE AZERTY",
+          "FR AZERTY",
+          "DE QWERTZ"
+        ]
+      }
+    },
+    "provider": "PolyPatcher",
+    "safety": "review",
+    "note": "GUIを閉じた後のキー再登録はPatcherへ委譲。macOSでは上流のLWJGL制限によりキー再登録は非対応。Foreign Keyboard設定はLinuxのみ。OFFは再登録OFF/QWERTYへ戻します。",
+    "requires": "patcher"
+  },
+  {
+    "id": "scrollfix",
+    "name": "Hotbar Scroll Overflow Fix",
+    "group": "Input Foundation",
+    "status": "external",
+    "default": false,
+    "settings": {},
+    "provider": "PolyPatcher",
+    "safety": "cosmetic",
+    "note": "PolyPatcherのpreventOverflowHotbarScrollingを統一設定へ接続。",
+    "requires": "patcher"
+  },
+  {
+    "id": "fullbright",
+    "name": "Fullbright",
+    "group": "Clear View",
+    "status": "external",
+    "default": false,
+    "settings": {},
+    "provider": "PolyPatcher",
+    "safety": "cosmetic",
+    "note": "Ttroがこの設定を管理。OFFはPatcherの初期値によらず通常照明へ戻します。",
+    "requires": "patcher"
+  },
+  {
+    "id": "reducedfire",
+    "name": "Reduced Fire",
+    "group": "Clear View",
+    "status": "external",
+    "default": false,
+    "settings": {
+      "height": {
+        "type": "number",
+        "default": 0,
+        "min": -1,
+        "max": 1
+      },
+      "opacity": {
+        "type": "number",
+        "default": 70,
+        "min": 0,
+        "max": 100
+      }
+    },
+    "provider": "PolyPatcher",
+    "safety": "cosmetic",
+    "note": "Ttroが火の高さ・不透明度を管理。OFFはVanillaの高さ/100%へ戻します。",
+    "requires": "patcher"
+  },
+  {
+    "id": "timechanger",
+    "name": "Time Changer",
+    "group": "Clear View",
+    "status": "candidate",
+    "default": false,
+    "settings": {},
+    "provider": "existing OSS / review",
+    "safety": "cosmetic",
+    "note": "PolyPatcher 1.10.4の公開設定に該当機能はありません。別の1.8.9資産を調査して統合します。"
+  },
+  {
+    "id": "weather",
+    "name": "Weather",
+    "group": "Clear View",
+    "status": "candidate",
+    "default": false,
+    "settings": {},
+    "provider": "existing OSS / review",
+    "safety": "cosmetic",
+    "note": "PolyPatcher 1.10.4の公開設定に該当機能はありません。別の1.8.9資産を調査して統合します。"
+  },
+  {
+    "id": "fov",
+    "name": "Static FOV",
+    "group": "Clear View",
+    "status": "external",
+    "default": false,
+    "settings": {},
+    "provider": "PolyPatcher",
+    "safety": "cosmetic",
+    "note": "PatcherのSprint/Flying/Bow/Speed/Slowness倍率を0へ設定。OFFはVanilla変化へ戻します。Zoomとの併用を実ゲームで検証します。",
+    "requires": "patcher"
+  },
+  {
+    "id": "hitcolor",
+    "name": "Hit Color",
+    "group": "Clear View",
+    "status": "candidate",
+    "default": false,
+    "settings": {},
+    "provider": "MWE",
+    "safety": "cosmetic",
+    "note": ""
+  },
+  {
+    "id": "viewmodel",
+    "name": "ViewModel",
+    "group": "Clear View",
+    "status": "candidate",
+    "default": false,
+    "settings": {},
+    "provider": "existing OSS / review",
+    "safety": "review",
+    "note": ""
+  },
+  {
+    "id": "blockoverlay",
+    "name": "Block Overlay",
+    "group": "Clear View",
+    "status": "candidate",
+    "default": false,
+    "settings": {},
+    "provider": "existing OSS / review",
+    "safety": "cosmetic",
+    "note": ""
+  },
+  {
+    "id": "hurtcamera",
+    "name": "Hurt Camera",
+    "group": "Clear View",
+    "status": "candidate",
+    "default": false,
+    "settings": {},
+    "provider": "existing OSS / review",
+    "safety": "review",
+    "note": ""
+  },
+  {
+    "id": "particles",
+    "name": "Particle Controls",
+    "group": "Clear View",
+    "status": "candidate",
+    "default": false,
+    "settings": {},
+    "provider": "PolyPatcher / MWE",
+    "safety": "review",
+    "note": "PolyPatcher 1.10.4の粒子設定は上流でOverflowParticlesへ分離。古い互換フィールドに値を入れて実装済みとは扱いません。"
+  },
+  {
+    "id": "oldanimations",
+    "name": "1.7 Animations",
+    "group": "Clear View",
+    "status": "candidate",
+    "default": false,
+    "settings": {},
+    "provider": "Sk1er OldAnimations / LGPL-3.0",
+    "safety": "cosmetic",
+    "note": ""
+  },
+  {
+    "id": "freelook",
+    "name": "Freelook / Perspective",
+    "group": "PvP",
+    "status": "candidate",
+    "default": false,
+    "settings": {},
+    "provider": "existing OSS / review",
+    "safety": "restricted",
+    "note": ""
+  },
+  {
+    "id": "nickhider",
+    "name": "Nick Hider",
+    "group": "Visual",
+    "status": "candidate",
+    "default": false,
+    "settings": {},
+    "provider": "existing OSS / review",
+    "safety": "cosmetic",
+    "note": ""
+  },
+  {
+    "id": "damage",
+    "name": "Damage Tint",
+    "group": "Awareness",
+    "status": "candidate",
+    "default": false,
+    "settings": {},
+    "provider": "MWE / review",
+    "safety": "cosmetic",
+    "note": ""
+  },
+  {
+    "id": "lowhp",
+    "name": "Low HP Alert",
+    "group": "Awareness",
+    "status": "candidate",
+    "default": false,
+    "settings": {},
+    "provider": "MWE / review",
+    "safety": "cosmetic",
+    "note": ""
+  },
+  {
+    "id": "durabilitywarning",
+    "name": "Durability Warning",
+    "group": "Awareness",
+    "status": "candidate",
+    "default": false,
+    "settings": {},
+    "provider": "MWE / review",
+    "safety": "cosmetic",
+    "note": ""
+  },
+  {
+    "id": "potionwarning",
+    "name": "Potion Expiry Warning",
+    "group": "Awareness",
+    "status": "candidate",
+    "default": false,
+    "settings": {},
+    "provider": "MWE / review",
+    "safety": "cosmetic",
+    "note": ""
+  },
+  {
+    "id": "dropprotection",
+    "name": "Sword / Important Item Drop Protection",
+    "group": "Protection",
+    "status": "candidate",
+    "default": false,
+    "settings": {},
+    "provider": "MWE",
+    "safety": "uncertain",
+    "note": ""
+  },
+  {
+    "id": "hypixel",
+    "name": "Hypixel Server / Game / Party",
+    "group": "Server",
+    "status": "implemented",
+    "default": false,
+    "settings": {
+      "party": {
+        "type": "boolean",
+        "default": false
+      }
+    },
+    "provider": "Hypixel Official Mod API / MIT",
+    "safety": "cosmetic",
+    "note": "公式Mod API導入時だけ有効。Party要求はユーザー操作時のみ。",
+    "requires": "hypixel_mod_api"
+  },
+  {
+    "id": "waterfov",
+    "name": "Water FOV Cleanup",
+    "group": "Clear View",
+    "status": "external",
+    "default": false,
+    "settings": {},
+    "provider": "PolyPatcher",
+    "requires": "patcher",
+    "safety": "cosmetic",
+    "note": "水中のFOV変化をPatcherで軽減。OFFは水中のVanilla FOVへ戻します。"
+  },
+  {
+    "id": "nightvision",
+    "name": "Night Vision Cleanup",
+    "group": "Clear View",
+    "status": "external",
+    "default": false,
+    "settings": {},
+    "provider": "PolyPatcher",
+    "requires": "patcher",
+    "safety": "cosmetic",
+    "note": "PatcherでNight Vision終了前の点滅を穏やかな減衰へ変更。Potionそのものは保持します。"
+  },
+  {
+    "id": "glint",
+    "name": "Disable Enchantment Glint",
+    "group": "QoL",
+    "status": "external",
+    "default": false,
+    "settings": {},
+    "provider": "PolyPatcher",
+    "requires": "patcher",
+    "safety": "cosmetic",
+    "note": "PolyPatcher 1.10.4のdisableEnchantmentGlintを利用。実設定連携と表示の検証は個別に記録します。"
+  },
+  {
+    "id": "smoothscroll",
+    "name": "Smooth Scrolling",
+    "group": "QoL",
+    "status": "external",
+    "default": false,
+    "settings": {},
+    "provider": "PolyPatcher",
+    "requires": "patcher",
+    "safety": "cosmetic",
+    "note": "PolyPatcher 1.10.4のsmoothScrollingを利用。実設定連携と表示の検証は個別に記録します。"
+  },
+  {
+    "id": "numericalenchants",
+    "name": "Numerical Enchants",
+    "group": "QoL",
+    "status": "external",
+    "default": false,
+    "settings": {},
+    "provider": "PolyPatcher",
+    "requires": "patcher",
+    "safety": "cosmetic",
+    "note": "PolyPatcher 1.10.4のnumericalEnchantsを利用。実設定連携と表示の検証は個別に記録します。"
+  },
+  {
+    "id": "chatstamp",
+    "name": "Chat Timestamps",
+    "group": "QoL",
+    "status": "external",
+    "default": false,
+    "settings": {},
+    "provider": "PolyPatcher",
+    "requires": "patcher",
+    "safety": "cosmetic",
+    "note": "PolyPatcher 1.10.4のtimestampsを利用。実設定連携と表示の検証は個別に記録します。"
+  },
+  {
+    "id": "smartdisconnect",
+    "name": "Smart Disconnect",
+    "group": "QoL",
+    "status": "external",
+    "default": false,
+    "settings": {},
+    "provider": "PolyPatcher",
+    "requires": "patcher",
+    "safety": "cosmetic",
+    "note": "PolyPatcher 1.10.4のsmartDisconnectを利用。実設定連携と表示の検証は個別に記録します。"
+  },
+  {
+    "id": "confirmquit",
+    "name": "Confirm Quit",
+    "group": "QoL",
+    "status": "external",
+    "default": false,
+    "settings": {},
+    "provider": "PolyPatcher",
+    "requires": "patcher",
+    "safety": "cosmetic",
+    "note": "PolyPatcher 1.10.4のconfirmQuitを利用。実設定連携と表示の検証は個別に記録します。"
+  },
+  {
+    "id": "tablayers",
+    "name": "Tab Hat Layers",
+    "group": "QoL",
+    "status": "external",
+    "default": false,
+    "settings": {},
+    "provider": "PolyPatcher",
+    "requires": "patcher",
+    "safety": "cosmetic",
+    "note": "PolyPatcher 1.10.4のlayersInTabを利用。実設定連携と表示の検証は個別に記録します。"
+  },
+  {
+    "id": "packimages",
+    "name": "Pack Preview Downscale",
+    "group": "Performance",
+    "status": "external",
+    "default": false,
+    "settings": {},
+    "provider": "PolyPatcher",
+    "requires": "patcher",
+    "safety": "cosmetic",
+    "note": "PolyPatcher 1.10.4のdownscalePackImagesを利用。実設定連携と表示の検証は個別に記録します。"
+  },
+  {
+    "id": "fontcache",
+    "name": "Font Cache",
+    "group": "Performance",
+    "status": "external",
+    "default": false,
+    "settings": {},
+    "provider": "PolyPatcher",
+    "requires": "patcher",
+    "safety": "cosmetic",
+    "note": "PolyPatcher 1.10.4のcacheFontDataを利用。実設定連携と表示の検証は個別に記録します。"
+  },
+  {
+    "id": "batchmodels",
+    "name": "Model Rendering Batch",
+    "group": "Performance",
+    "status": "external",
+    "default": false,
+    "settings": {},
+    "provider": "PolyPatcher",
+    "requires": "patcher",
+    "safety": "cosmetic",
+    "note": "PolyPatcher 1.10.4のbatchModelRenderingを利用。実設定連携と表示の検証は個別に記録します。"
+  },
+  {
+    "id": "entrycache",
+    "name": "Forge Entrypoint Cache",
+    "group": "Performance",
+    "status": "external",
+    "default": false,
+    "settings": {},
+    "provider": "PolyPatcher",
+    "requires": "patcher",
+    "safety": "cosmetic",
+    "note": "PolyPatcher 1.10.4のcacheEntrypointsを利用。実設定連携と表示の検証は個別に記録します。"
+  },
+  {
+    "id": "windowedfullscreen",
+    "name": "Windowed Fullscreen",
+    "group": "QoL",
+    "status": "external",
+    "default": false,
+    "settings": {},
+    "provider": "PolyPatcher",
+    "requires": "patcher",
+    "safety": "cosmetic",
+    "note": "PolyPatcher 1.10.4のwindowedFullscreenを利用。実設定連携と表示の検証は個別に記録します。"
+  },
+  {
+    "id": "moderntab",
+    "name": "Modern Tab / Player List",
+    "group": "Server",
+    "status": "implemented",
+    "default": false,
+    "settings": {},
+    "provider": "Ttro Client",
+    "safety": "cosmetic",
+    "note": "通常のtablist display name・team prefix・通知pingのみ。ScoreObjective・header/footer付き・80人超はVanillaへ戻す。外部APIからlevelやrankを推測しません。"
+  }
+]

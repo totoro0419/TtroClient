@@ -1,0 +1,4 @@
+LZMA SDK 19.00 decoding code is in the public domain.
+Upstream: https://www.7-zip.org/sdk.html
+NuGet wrapper LZMA-SDK 19.0.0 declares MIT in its nuspec.
+No original SDK source algorithms were modified.

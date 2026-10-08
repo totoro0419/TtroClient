@@ -1,0 +1,29 @@
+{
+  "name": "Ttro Client",
+  "shortName": "Ttro Client",
+  "formalNameApproved": true,
+  "internalId": "ttro189",
+  "version": "0.3.0-alpha.1",
+  "artifact": "ttro-client-1.8.9",
+  "bundleName": "Ttro-Client",
+  "dataFolder": "TtroClient189",
+  "logo": "icon.svg",
+  "icon": "icon.svg",
+  "accent": "#e7aa28",
+  "website": "https://totoro0419.github.io/TtroClient/",
+  "repository": "https://github.com/totoro0419/TtroClient",
+  "compatibility": {
+    "legacyDataFolder": "TtroClient189",
+    "configFile": "ttro-client.json",
+    "profileFile": "ttro-profile.json",
+    "instancePrefix": "ttro189-",
+    "ownershipFile": "ttro-owned.json",
+    "integrationRecord": "ttro-integration.json"
+  },
+  "minecraft": {
+    "version": "1.8.9",
+    "loader": "forge",
+    "loaderVersion": "11.15.1.2318",
+    "java": 8
+  }
+}

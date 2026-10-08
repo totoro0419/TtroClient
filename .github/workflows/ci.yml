@@ -1,0 +1,76 @@
+name: Build and verify 1.8.9 alpha
+on:
+  push:
+    branches: [main, 'integration/**']
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  client:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '8'
+      - run: python tools/build.py
+      - run: python -m unittest discover -s tests -p 'test*.py'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: client-payload
+          path: launcher/payload/
+          if-no-files-found: error
+  windows:
+    runs-on: windows-latest
+    needs: client
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: client-payload
+          path: launcher/payload
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Native core regression
+        run: dotnet run --project tests/native/Ttro.Launcher.Tests.csproj -c Release
+      - name: Restore native dependencies and collect notices
+        run: |
+          dotnet restore launcher/native/Ttro.Launcher/Ttro.Launcher.csproj -r win-x64
+          python tools/native_notices.py
+      - name: Self-contained Windows launcher
+        run: dotnet publish launcher/native/Ttro.Launcher/Ttro.Launcher.csproj -c Release -r win-x64 --self-contained true -o dist/portable
+      - name: Package installer
+        shell: pwsh
+        run: |
+          choco install nsis --no-progress -y
+          python tools/package_windows.py --makensis 'C:\Program Files (x86)\NSIS\makensis.exe'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TtroClient-Windows-alpha
+          path: |
+            dist/TtroClient-Setup.exe
+            dist/TtroClient-Portable.zip
+            dist/checksums.txt
+            dist/ttro-client-1.8.9-*.jar
+          if-no-files-found: error
+  web:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: node tests/website.test.cjs
+        env:
+          TTRO_USE_LOCAL_PLAYWRIGHT: '1'

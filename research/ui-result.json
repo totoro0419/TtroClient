@@ -1,0 +1,135 @@
+{
+  "checks": [
+    {
+      "name": "Ttro Client title",
+      "status": "PASS"
+    },
+    {
+      "name": "Forge 1.8.9 PLAY",
+      "status": "PASS"
+    },
+    {
+      "name": "purpose search reaches inventory",
+      "status": "PASS"
+    },
+    {
+      "name": "six Inventory Controls",
+      "status": "PASS"
+    },
+    {
+      "name": "rapid independent edits retained",
+      "status": "PASS"
+    },
+    {
+      "name": "empty command results",
+      "status": "PASS"
+    },
+    {
+      "name": "dialog Escape closes",
+      "status": "PASS"
+    },
+    {
+      "name": "candidate reach disabled",
+      "status": "PASS"
+    },
+    {
+      "name": "external provider absent cannot enable",
+      "status": "PASS"
+    },
+    {
+      "name": "external provider absence explained",
+      "status": "PASS"
+    },
+    {
+      "name": "foundation is install status not a toggle",
+      "status": "PASS"
+    },
+    {
+      "name": "foundation badge does not wrap",
+      "status": "PASS"
+    },
+    {
+      "name": "foundation semantics explained",
+      "status": "PASS"
+    },
+    {
+      "name": "foundation safety does not claim session blocking",
+      "status": "PASS"
+    },
+    {
+      "name": "keyboard layout persists",
+      "status": "PASS"
+    },
+    {
+      "name": "HeadFX persists",
+      "status": "PASS"
+    },
+    {
+      "name": "individual HUD placement persists",
+      "status": "PASS"
+    },
+    {
+      "name": "horizontal reflow 1280",
+      "status": "PASS"
+    },
+    {
+      "name": "horizontal reflow 768",
+      "status": "PASS"
+    },
+    {
+      "name": "horizontal reflow 390",
+      "status": "PASS"
+    },
+    {
+      "name": "horizontal reflow 320",
+      "status": "PASS"
+    },
+    {
+      "name": "200 percent equivalent reflow",
+      "status": "PASS"
+    },
+    {
+      "name": "reduced motion",
+      "status": "PASS"
+    },
+    {
+      "name": "library empty state",
+      "status": "PASS"
+    },
+    {
+      "name": "resource packs imported in UI",
+      "status": "PASS"
+    },
+    {
+      "name": "pack disable and enable available",
+      "status": "PASS"
+    },
+    {
+      "name": "pack preview empty images explained",
+      "status": "PASS"
+    },
+    {
+      "name": "search error retry",
+      "status": "PASS"
+    },
+    {
+      "name": "interactive direction ribbon",
+      "status": "PASS"
+    },
+    {
+      "name": "interactive direction dock",
+      "status": "PASS"
+    },
+    {
+      "name": "interactive direction flow",
+      "status": "PASS"
+    },
+    {
+      "name": "no JS runtime errors",
+      "status": "PASS"
+    }
+  ],
+  "errors": [],
+  "environment": "Chromium 133 headless; Forge 1.8.9 Launcher",
+  "status": "PASS"
+}

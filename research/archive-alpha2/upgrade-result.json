@@ -1,0 +1,1 @@
+{"status":"PASS","checks":[{"name":"real Alpha.1 upgrade enabled","status":"PASS"},{"name":"real Alpha.1 upgrade disabled","status":"PASS"},{"name":"real Alpha.1 upgrade custom","status":"PASS"}],"prior_jar_sha256":"c80378f47bc6ed74ca325fc7abfedf584d4ea43fcae4f854bb6de08a34a4720b","new_jar_sha256":"5b338f9172f039eb89745d2d4b7684351e13dc506815a2fef9b6e43e95249f8d"}

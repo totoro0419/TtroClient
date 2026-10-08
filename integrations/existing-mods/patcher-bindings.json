@@ -1,0 +1,15 @@
+{
+  "scrollfix": "preventOverflowHotbarScrolling",
+  "glint": "disableEnchantmentGlint",
+  "smoothscroll": "smoothScrolling",
+  "numericalenchants": "numericalEnchants",
+  "chatstamp": "timestamps",
+  "smartdisconnect": "smartDisconnect",
+  "confirmquit": "confirmQuit",
+  "tablayers": "layersInTab",
+  "packimages": "downscalePackImages",
+  "fontcache": "cacheFontData",
+  "batchmodels": "batchModelRendering",
+  "entrycache": "cacheEntrypoints",
+  "windowedfullscreen": "windowedFullscreen"
+}

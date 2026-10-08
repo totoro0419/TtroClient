@@ -1,0 +1,204 @@
+[
+  {
+    "package": "CmlLib.Core.Auth.Microsoft/3.3.1",
+    "authors": "ksi123456ab",
+    "license": "MIT",
+    "license_type": "expression",
+    "source": "https://github.com/CmlLib/CmlLib.Core.Auth.Microsoft",
+    "included_notices": []
+  },
+  {
+    "package": "CmlLib.Core.Commons/4.0.0",
+    "authors": "AlphaBs",
+    "license": "MIT",
+    "license_type": "expression",
+    "source": "https://github.com/CmlLib/CmlLib.Core.Commons",
+    "included_notices": []
+  },
+  {
+    "package": "CmlLib.Core.Installer.Forge/2.0.0",
+    "authors": "CmlLib",
+    "license": "MIT",
+    "license_type": "expression",
+    "source": "https://github.com/CmlLib/CmlLib.Core.Installer.Forge",
+    "included_notices": []
+  },
+  {
+    "package": "CmlLib.Core/4.0.6",
+    "authors": "AlphaBs",
+    "license": "MIT",
+    "license_type": "expression",
+    "source": "https://github.com/CmlLib/CmlLib.Core",
+    "included_notices": []
+  },
+  {
+    "package": "HtmlAgilityPack/1.11.48",
+    "authors": "ZZZ Projects,Simon Mourrier,Jeff Klawiter,Stephan Grell",
+    "license": null,
+    "license_type": null,
+    "source": "https://github.com/zzzprojects/html-agility-pack/",
+    "included_notices": []
+  },
+  {
+    "package": "LZMA-SDK/19.0.0",
+    "authors": "Mihir Mone",
+    "license": "MIT",
+    "license_type": "expression",
+    "source": null,
+    "included_notices": []
+  },
+  {
+    "package": "Microsoft.Extensions.DependencyInjection.Abstractions/8.0.1",
+    "authors": "Microsoft",
+    "license": "MIT",
+    "license_type": "expression",
+    "source": "https://github.com/dotnet/runtime",
+    "included_notices": [
+      "Microsoft.Extensions.DependencyInjection.Abstractions-8.0.1-LICENSE.TXT",
+      "Microsoft.Extensions.DependencyInjection.Abstractions-8.0.1-THIRD-PARTY-NOTICES.TXT"
+    ]
+  },
+  {
+    "package": "Microsoft.Extensions.Logging.Abstractions/8.0.1",
+    "authors": "Microsoft",
+    "license": "MIT",
+    "license_type": "expression",
+    "source": "https://github.com/dotnet/runtime",
+    "included_notices": [
+      "Microsoft.Extensions.Logging.Abstractions-8.0.1-LICENSE.TXT",
+      "Microsoft.Extensions.Logging.Abstractions-8.0.1-THIRD-PARTY-NOTICES.TXT"
+    ]
+  },
+  {
+    "package": "Microsoft.Identity.Client.Extensions.Msal/4.61.3",
+    "authors": "Microsoft",
+    "license": "MIT",
+    "license_type": "expression",
+    "source": "https://github.com/AzureAD/microsoft-authentication-library-for-dotnet",
+    "included_notices": []
+  },
+  {
+    "package": "Microsoft.Identity.Client/4.61.3",
+    "authors": "Microsoft",
+    "license": "MIT",
+    "license_type": "expression",
+    "source": "https://github.com/AzureAD/microsoft-authentication-library-for-dotnet",
+    "included_notices": []
+  },
+  {
+    "package": "Microsoft.IdentityModel.Abstractions/6.35.0",
+    "authors": "Microsoft",
+    "license": "MIT",
+    "license_type": "expression",
+    "source": "https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet",
+    "included_notices": []
+  },
+  {
+    "package": "Microsoft.Web.WebView2/1.0.1823.32",
+    "authors": "Microsoft",
+    "license": "LICENSE.txt",
+    "license_type": "file",
+    "source": null,
+    "included_notices": [
+      "Microsoft.Web.WebView2-1.0.1823.32-LICENSE.txt"
+    ]
+  },
+  {
+    "package": "SharpZipLib/1.4.2",
+    "authors": "ICSharpCode",
+    "license": "MIT",
+    "license_type": "expression",
+    "source": "https://github.com/icsharpcode/SharpZipLib",
+    "included_notices": []
+  },
+  {
+    "package": "System.Diagnostics.DiagnosticSource/6.0.1",
+    "authors": "Microsoft",
+    "license": "MIT",
+    "license_type": "expression",
+    "source": "https://github.com/dotnet/runtime",
+    "included_notices": [
+      "System.Diagnostics.DiagnosticSource-6.0.1-LICENSE.TXT",
+      "System.Diagnostics.DiagnosticSource-6.0.1-THIRD-PARTY-NOTICES.TXT"
+    ]
+  },
+  {
+    "package": "System.Net.Http.Json/8.0.0",
+    "authors": "Microsoft",
+    "license": "MIT",
+    "license_type": "expression",
+    "source": "https://github.com/dotnet/runtime",
+    "included_notices": [
+      "System.Net.Http.Json-8.0.0-LICENSE.TXT",
+      "System.Net.Http.Json-8.0.0-THIRD-PARTY-NOTICES.TXT"
+    ]
+  },
+  {
+    "package": "System.Runtime.CompilerServices.Unsafe/6.0.0",
+    "authors": "Microsoft",
+    "license": "MIT",
+    "license_type": "expression",
+    "source": "https://github.com/dotnet/runtime",
+    "included_notices": [
+      "System.Runtime.CompilerServices.Unsafe-6.0.0-LICENSE.TXT",
+      "System.Runtime.CompilerServices.Unsafe-6.0.0-THIRD-PARTY-NOTICES.TXT"
+    ]
+  },
+  {
+    "package": "System.Security.Cryptography.ProtectedData/4.5.0",
+    "authors": "Microsoft",
+    "license": null,
+    "license_type": null,
+    "source": null,
+    "included_notices": [
+      "System.Security.Cryptography.ProtectedData-4.5.0-LICENSE.TXT",
+      "System.Security.Cryptography.ProtectedData-4.5.0-THIRD-PARTY-NOTICES.TXT"
+    ]
+  },
+  {
+    "package": "System.Text.Json/8.0.5",
+    "authors": "Microsoft",
+    "license": "MIT",
+    "license_type": "expression",
+    "source": "https://github.com/dotnet/runtime",
+    "included_notices": [
+      "System.Text.Json-8.0.5-LICENSE.TXT",
+      "System.Text.Json-8.0.5-THIRD-PARTY-NOTICES.TXT"
+    ]
+  },
+  {
+    "package": "System.Threading.Tasks.Dataflow/8.0.1",
+    "authors": "Microsoft",
+    "license": "MIT",
+    "license_type": "expression",
+    "source": "https://github.com/dotnet/runtime",
+    "included_notices": [
+      "System.Threading.Tasks.Dataflow-8.0.1-LICENSE.TXT",
+      "System.Threading.Tasks.Dataflow-8.0.1-THIRD-PARTY-NOTICES.TXT"
+    ]
+  },
+  {
+    "package": "XboxAuthNet.Game.Msal/0.1.3",
+    "authors": "ksi123456ab",
+    "license": "MIT",
+    "license_type": "expression",
+    "source": "https://github.com/AlphaBs/XboxAuthNet",
+    "included_notices": []
+  },
+  {
+    "package": "XboxAuthNet.Game/1.4.1",
+    "authors": "ksi123456ab",
+    "license": "MIT",
+    "license_type": "expression",
+    "source": "https://github.com/CmlLib/CmlLib.Core.Auth.Microsoft",
+    "included_notices": []
+  },
+  {
+    "package": "XboxAuthNet/3.0.4",
+    "authors": "ksi123456ab",
+    "license": "MIT",
+    "license_type": "expression",
+    "source": "https://github.com/AlphaBs/XboxAuthNet",
+    "included_notices": []
+  }
+]
