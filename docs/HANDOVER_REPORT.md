@@ -1,3 +1,5 @@
+> 履歴資料: 0.2.0-alpha.2の引き継ぎ報告。現在の正式Repository / Native Launcher / 0.3.0-alpha.1の状態は [INTEGRATION_REPORT.md](INTEGRATION_REPORT.md) を参照してください。ここにある古い配布物・QAは現版の完成証拠ではありません。
+
 # Ttro Client — 1.8.9再構築・引継ぎ報告
 
 2026-10-08 / 0.2.0-alpha.2。Minecraft Java Edition **1.8.9 / Forge 11.15.1.2318 / Java 8** を固定した。

@@ -22,10 +22,10 @@ with zipfile.ZipFile(dev,'w',zipfile.ZIP_DEFLATED) as z:
  for p in classes.rglob('*.class'):z.write(p,p.relative_to(classes))
 subprocess.run([str(JDK/'java'),'-cp',os.pathsep.join([str(WORK/'toolchain/specialsource.jar'),str(dev),cp]),'net.md_5.specialsource.SpecialSource','-i',str(dev),'-o',str(jar),'-m',str(mapping),'--live'],check=True)
 mods=game/'mods';mods.mkdir(parents=True,exist_ok=True);shutil.copy2(jar,mods/jar.name)
-product=json.loads((ROOT/'launcher/product.json').read_text());name=product['artifact']+'-'+product['version']+'.jar'
+product=json.loads((ROOT/'launcher/product.json').read_text());client_name=product['artifact']+'-'+product['version']+'.jar'
 if args.baseline:shutil.copy2(WORK/'toolchain/mousetweaks.jar',mods/'mousetweaks.jar')
 else:
- shutil.copy2(ROOT/'launcher/payload'/name,mods/name)
+ shutil.copy2(ROOT/'launcher/payload'/client_name,mods/client_name)
  if args.fast:shutil.copy2(WORK/'toolchain/hypixel-mod-api.jar',mods/'hypixel-mod-api.jar')
  if args.patcher:shutil.copy2(WORK/'toolchain/patcher.jar',mods/'patcher.jar')
  if args.patcher:
@@ -70,9 +70,9 @@ if result.exists():
  data['screenshot_validation']={'status':'PASS','png_count':len(captures)}
  data['launch']={'exit_code':run.returncode,'test_seconds':round(time.monotonic()-start,1),'fps_limit':args.fps,'patcher':args.patcher,'packs':args.packs,'baseline':args.baseline}
  if not args.baseline:
-  data['artifact_sha256']=hashlib.sha256((mods/name).read_bytes()).hexdigest()
+  data['artifact_sha256']=hashlib.sha256((mods/client_name).read_bytes()).hexdigest()
   expected=json.loads((ROOT/'launcher/payload/client-manifest.json').read_text())['sha256']
   if data['artifact_sha256']!=expected:raise ValueError('QA runtime payload does not match packaged client manifest')
  (target/'result.json').write_text(json.dumps(data,indent=2)+'\n')
- if any(c['status']=='FAIL' for c in checks):raise SystemExit(1)
+ if run.returncode!=0 or any(c['status']=='FAIL' for c in checks):raise SystemExit(1)
 else:raise RuntimeError('No real game QA result. See '+str(log))

@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "limits": [
+    "No Microsoft account sign-in",
+    "No Minecraft PLAY",
+    "No physical mouse, DPI or screen-reader certification"
+  ],
+  "checks": [
+    "native main window opens",
+    "window branding",
+    "PLAY accessible control",
+    "window resize preserves minimum layout",
+    "missing OAuth configuration is visible, no offline success",
+    "UI recovers after authentication error",
+    "native UI creates persistent profile",
+    "context module exposes native automation semantics",
+    "keyboard Space toggles native module",
+    "keyboard Ctrl+K reaches module search",
+    "native module toggle persists OFF",
+    "context state agrees with saved module state",
+    "native launcher closes normally"
+  ],
+  "environment": "GitHub Actions Windows runner / UI Automation"
+}

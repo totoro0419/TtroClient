@@ -66,3 +66,10 @@ Alpha.2ではSTATE.01 / PATTERN.SWITCHに基づき、常設のMouse Delay/Bind�
 Skillによる具体的変更: 成功するまでPLAY/Installの成功表示を出さない。設定の書き込み中とgame実行中にProfileを切替えさせない。修復が未知fileを上書きしない。配布ページはReleaseがなければDLを無効の状態にし、通信失敗と未公開を別の説明にする。MS認証未設定を黙ってoffline起動に置き換えない。
 
 古いWeb prototypeのbrowser QAとネイティブWPFのbuildをWindows実機UI QAとして扱わない。Pagesは320/390/768/1280px reflow、keyboard skip、空Release、取得失敗、prerelease表示をPlaywrightで検証。
+
+
+### Windows実行QAによる修正
+
+GitHub ActionsのWindows desktopでnative Window、760×620 resize、OAuth未設定のerrorと復帰、Profile作成、設定保存、終了を実行。UIAで発見したCheckbox Click依存の保存欠落をChecked/Uncheckedへ変更し、支援技術経由の切替も保存されるよう修正した。OSへのキーボード入力によるSpace切替、Ctrl+K検索focusは再検証PASS。実行画面で一覧OFFに対してContext見出しONが残る不整合も発見し、保存後に同じstateを反映する修正と回帰チェックを追加した。
+
+この結果は実行画面と操作・永続化を組み合わせた証拠であり、125/150/200% DPI、Windows text scaling、長文/多言語、スクリーンリーダー、physical mouse、実Microsoft accountのQAを代替しない。対応する証拠はresearch/current-windows-qa、現版の範囲はINTEGRATION_REPORT.mdへ記載する。

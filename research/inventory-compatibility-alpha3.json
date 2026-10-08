@@ -1,0 +1,53 @@
+{
+  "status": "PASS",
+  "version": "0.3.0-alpha.1",
+  "artifact_sha256": "1145c4680e46dd59927aa6155d9046576e09e69f18209989e93439ef8bac0f63",
+  "upstream_file_id": 2287384,
+  "upstream_sha256": "5ac93656e71f1a7f38327b70e508249932d2d076ef139635dd6dcad502b21faa",
+  "current": "qa-alpha3-stack",
+  "reference": "qa-alpha3-baseline",
+  "environment": "Real Forge 2318 GuiChest / Java AWT Robot OS pointer-button-wheel input / Xvfb / Mesa software rendering",
+  "checks": [
+    {
+      "name": "right-drag",
+      "status": "PASS"
+    },
+    {
+      "name": "left-collect",
+      "status": "PASS"
+    },
+    {
+      "name": "shift-drag",
+      "status": "PASS"
+    },
+    {
+      "name": "wheel-out",
+      "status": "PASS"
+    },
+    {
+      "name": "wheel-in",
+      "status": "PASS"
+    },
+    {
+      "name": "wheel-in-first",
+      "status": "PASS"
+    },
+    {
+      "name": "wheel-in-last",
+      "status": "PASS"
+    },
+    {
+      "name": "reverse-out",
+      "status": "PASS"
+    },
+    {
+      "name": "reverse-in",
+      "status": "PASS"
+    }
+  ],
+  "limits": [
+    "No physical human mouse QA",
+    "No crafting-output or NBT identity comparison",
+    "No third-party inventory GUI or live server test"
+  ]
+}

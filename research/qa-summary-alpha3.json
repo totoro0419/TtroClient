@@ -1,0 +1,140 @@
+{
+  "version": "0.3.0-alpha.1",
+  "artifact_sha256": "1145c4680e46dd59927aa6155d9046576e09e69f18209989e93439ef8bac0f63",
+  "runtime_payload_hashes": "PASS",
+  "game_checks": {
+    "qa-alpha3-native": {
+      "pass": 21,
+      "captured": 0
+    },
+    "qa-alpha3-stack": {
+      "pass": 57,
+      "captured": 9
+    },
+    "qa-alpha3-baseline": {
+      "pass": 2,
+      "captured": 9
+    },
+    "qa-alpha3-isolated-benchmark": {
+      "pass": 11,
+      "captured": 0
+    }
+  },
+  "inventory": {
+    "status": "PASS",
+    "reference_file_id": 2287384,
+    "comparisons": [
+      {
+        "name": "right-drag",
+        "status": "PASS"
+      },
+      {
+        "name": "left-collect",
+        "status": "PASS"
+      },
+      {
+        "name": "shift-drag",
+        "status": "PASS"
+      },
+      {
+        "name": "wheel-out",
+        "status": "PASS"
+      },
+      {
+        "name": "wheel-in",
+        "status": "PASS"
+      },
+      {
+        "name": "wheel-in-first",
+        "status": "PASS"
+      },
+      {
+        "name": "wheel-in-last",
+        "status": "PASS"
+      },
+      {
+        "name": "reverse-out",
+        "status": "PASS"
+      },
+      {
+        "name": "reverse-in",
+        "status": "PASS"
+      }
+    ],
+    "scope": "OS AWT Robot input to real Forge GuiChest; 45 slot counts and held count",
+    "unverified": [
+      "Physical human input",
+      "NBT identity",
+      "Crafting output",
+      "Third-party GUI",
+      "Live server"
+    ]
+  },
+  "performance": {
+    "status": "INCONCLUSIVE_RELEASE_GATE_NOT_PASSED",
+    "benchmark": "qa-alpha3-isolated-benchmark",
+    "scope": "Software renderer, same Ttro process, selected modules OFF/ON/OFF/ON; no Vanilla/Lunar comparison",
+    "windows": [
+      {
+        "window": 0,
+        "mode": "OFF",
+        "samples": 1743,
+        "average_fps": 173.51636019126178,
+        "one_percent_low": 56.74555789310125,
+        "mean_frametime_ms": 5.763145324727481,
+        "p99_ms": 13.351795,
+        "max_frametime_ms": 29.642464,
+        "spikes_over_50ms": 0,
+        "peak_used_heap_mib": 459.39576721191406
+      },
+      {
+        "window": 1,
+        "mode": "ON",
+        "samples": 1782,
+        "average_fps": 178.16982895278593,
+        "one_percent_low": 68.30499278228731,
+        "mean_frametime_ms": 5.612622551627385,
+        "p99_ms": 11.78361,
+        "max_frametime_ms": 25.756476,
+        "spikes_over_50ms": 0,
+        "peak_used_heap_mib": 474.4973449707031
+      },
+      {
+        "window": 2,
+        "mode": "OFF",
+        "samples": 1889,
+        "average_fps": 188.92918787805738,
+        "one_percent_low": 69.85497467532896,
+        "mean_frametime_ms": 5.292988400741133,
+        "p99_ms": 10.68075,
+        "max_frametime_ms": 48.362755,
+        "spikes_over_50ms": 0,
+        "peak_used_heap_mib": 488.3684310913086
+      },
+      {
+        "window": 3,
+        "mode": "ON",
+        "samples": 1797,
+        "average_fps": 179.6727575852803,
+        "one_percent_low": 68.1638794626764,
+        "mean_frametime_ms": 5.565674025598219,
+        "p99_ms": 10.423156,
+        "max_frametime_ms": 51.847618,
+        "spikes_over_50ms": 1,
+        "peak_used_heap_mib": 486.2781219482422
+      }
+    ],
+    "gc_launch_total": {
+      "count": 21,
+      "total_pause_ms": 513.5469,
+      "max_pause_ms": 156.0296
+    },
+    "unmeasured": [
+      "Hardware GPU",
+      "Total process RAM/CPU",
+      "Input-to-photon",
+      "Startup time",
+      "Mode-specific GC attribution"
+    ]
+  }
+}

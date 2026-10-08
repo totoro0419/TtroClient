@@ -17,3 +17,7 @@ research/*.txt
 launcher/payload/*.jar
 !tests/fixtures/*.jar
 research/archive-alpha2/**/smoke-screenshots/
+
+research/downloads/
+research/game-qa/
+research/current-windows-qa/*.png

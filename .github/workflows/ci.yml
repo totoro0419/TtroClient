@@ -114,6 +114,8 @@ jobs:
         run: python tools/game_qa.py --game qa-alpha3-stack --patcher --packs
       - name: Paired software-renderer frametime samples
         run: python tools/game_qa.py --game qa-alpha3-benchmark --bench-only --fps 0 --pairs 2
+      - name: Verify upstream inventory equivalence and packaged payload hashes
+        run: python tools/current_qa_summary.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -121,6 +123,7 @@ jobs:
           path: |
             research/game-qa/qa-alpha3-*/
             research/qa-alpha3-*.log
+            research/qa-summary-alpha3.json
           if-no-files-found: warn
   web:
     runs-on: ubuntu-24.04
