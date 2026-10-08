@@ -115,15 +115,15 @@ public partial class MainWindow : Window
   if (!ready || ModuleList.SelectedItem is not ModuleEntry entry) return; ModuleContext.Children.Clear();
   var meta = store!.Catalog.Select(n => n!.AsObject()).Single(m => m["id"]!.GetValue<string>() == entry.Id); var values = store.Settings(store.Current)["modules"]![entry.Id]!;
   var available = meta["status"]!.GetValue<string>() != "candidate" && (meta["requires"] is null || content!.HasProvider(meta["requires"]!.GetValue<string>()));
-  void Text(string text, bool title = false) => ModuleContext.Children.Add(new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap, FontSize = title ? 23 : 15, FontWeight = title ? FontWeights.SemiBold : FontWeights.Normal, Margin = new Thickness(0, 4, 0, 12) });
-  Text(entry.Name, true); Text(entry.Status + " · " + meta["group"]!.GetValue<string>());
+  TextBlock Text(string text, bool title = false) { var block = new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap, FontSize = title ? 23 : 15, FontWeight = title ? FontWeights.SemiBold : FontWeights.Normal, Margin = new Thickness(0, 4, 0, 12) }; ModuleContext.Children.Add(block); return block; }
+  Text(entry.Name, true); var stateText = Text(entry.Status + " · " + meta["group"]!.GetValue<string>()); System.Windows.Automation.AutomationProperties.SetAutomationId(stateText, "ModuleStateLabel");
   Text("Server category: " + meta["safety"]!.GetValue<string>() + ". The server profile may restrict this feature in game. No ban exemption is implied.");
   if (meta["note"] is not null && !string.IsNullOrEmpty(meta["note"]!.GetValue<string>())) Text(meta["note"]!.GetValue<string>());
   if (meta["control"]?.GetValue<string>() == "foundation") Text("This is a permanent input fix supplied by PolyPatcher. It is not an optional toggle.");
   else
   {
    var toggle = new CheckBox { Content = "Enable " + entry.Name, IsChecked = values["enabled"]!.GetValue<bool>(), IsEnabled = available };
-   RoutedEventHandler saveToggle = (_, _) => Local(() => { store.SetValue(entry.Id, "enabled", JsonValue.Create(toggle.IsChecked == true)!); entry.Status = toggle.IsChecked == true ? "ON" : "OFF"; Status.Text = "Saved " + entry.Name + ". Changes apply on the next launch."; DrawCrosshair(); });
+   RoutedEventHandler saveToggle = (_, _) => Local(() => { store.SetValue(entry.Id, "enabled", JsonValue.Create(toggle.IsChecked == true)!); entry.Status = toggle.IsChecked == true ? "ON" : "OFF"; stateText.Text = entry.Status + " · " + meta["group"]!.GetValue<string>(); Status.Text = "Saved " + entry.Name + ". Changes apply on the next launch."; DrawCrosshair(); });
    toggle.Checked += saveToggle; toggle.Unchecked += saveToggle; ModuleContext.Children.Add(toggle);
   }
   foreach (var pair in meta["settings"]!.AsObject())

@@ -48,6 +48,7 @@ try {
  $state = Get-Content -Raw $data | ConvertFrom-Json
  $config = Get-Content -Raw (Join-Path $env:LOCALAPPDATA "TtroClient189/native/profiles/$($state.Selected)/config/ttro-client.json") | ConvertFrom-Json
  Check (!$config.modules.crosshair.enabled) 'native module toggle persists OFF'
+ Check ((FindId 'ModuleStateLabel').Current.Name -like 'OFF*') 'context state agrees with saved module state'
  New-Item -ItemType Directory -Force (Join-Path $PSScriptRoot '../research') | Out-Null
  $bounds = $window.Current.BoundingRectangle
  $bitmap = [System.Drawing.Bitmap]::new([int]$bounds.Width,[int]$bounds.Height)
