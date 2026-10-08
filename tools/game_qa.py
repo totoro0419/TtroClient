@@ -20,7 +20,7 @@ subprocess.run([str(JDK/'javac'),'-source','8','-target','8','-cp',cp,'-d',str(c
 dev=qa_build/'qa-dev.jar';jar=qa_build/'ttro-qa.jar'
 with zipfile.ZipFile(dev,'w',zipfile.ZIP_DEFLATED) as z:
  for p in classes.rglob('*.class'):z.write(p,p.relative_to(classes))
-subprocess.run([str(JDK/'java'),'-cp',os.pathsep.join([str(WORK/'toolchain/specialsource.jar'),str(dev),cp]),'net.md_5.specialsource.SpecialSource','-i',str(dev),'-o',str(jar),'-m',str(mapping),'--live','--stable'],check=True)
+subprocess.run([str(JDK/'java'),'-cp',os.pathsep.join([str(WORK/'toolchain/specialsource.jar'),str(dev),cp]),'net.md_5.specialsource.SpecialSource','-i',str(dev),'-o',str(jar),'-m',str(mapping),'--live'],check=True)
 mods=game/'mods';mods.mkdir(parents=True,exist_ok=True);shutil.copy2(jar,mods/jar.name)
 product=json.loads((ROOT/'launcher/product.json').read_text());name=product['artifact']+'-'+product['version']+'.jar'
 if args.baseline:shutil.copy2(WORK/'toolchain/mousetweaks.jar',mods/'mousetweaks.jar')
