@@ -56,6 +56,9 @@ jobs:
         run: |
           choco install nsis --no-progress -y
           python tools/package_windows.py --makensis 'C:\Program Files (x86)\NSIS\makensis.exe'
+      - name: Install, operate installed launcher and uninstall
+        shell: pwsh
+        run: ./tests/windows_installer_qa.ps1
       - uses: actions/upload-artifact@v4
         with:
           name: TtroClient-Windows-alpha
@@ -68,7 +71,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: TtroClient-QA-windows
-          path: research/windows-ui-smoke.json
+          path: research/windows-*-smoke.json
           if-no-files-found: error
   game:
     runs-on: ubuntu-24.04

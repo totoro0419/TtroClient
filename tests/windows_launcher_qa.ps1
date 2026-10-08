@@ -1,7 +1,8 @@
+param([string]$LauncherPath = (Join-Path $PSScriptRoot '../dist/portable/TtroClient.exe'))
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName UIAutomationClient
 Add-Type -AssemblyName UIAutomationTypes
-$exe = Join-Path $PSScriptRoot '../dist/portable/TtroClient.exe'
+$exe = $LauncherPath
 $process = Start-Process -FilePath $exe -PassThru
 $checks = @()
 function Check([bool]$ok, [string]$name) { if (!$ok) { throw $name }; $script:checks += $name; Write-Host "PASS $name" }

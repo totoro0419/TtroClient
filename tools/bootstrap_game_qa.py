@@ -1,5 +1,5 @@
 """Restore a private Linux 1.8.9 QA runtime from official metadata. Never package these binaries."""
-import concurrent.futures, hashlib, json, os, shutil, urllib.request, zipfile
+import concurrent.futures, hashlib, json, os, shutil, urllib.request, zipfile, uuid
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]; WORK=ROOT.parent
 TOOLS=WORK/'toolchain'; RUNTIME=WORK/'runtime189'; CACHE=TOOLS/'gradle-home/caches'
@@ -7,20 +7,23 @@ if RUNTIME.is_symlink(): RUNTIME.unlink()
 RUNTIME.mkdir(exist_ok=True)
 cache_files={}
 for p in (CACHE/'modules-2/files-2.1').rglob('*.jar'): cache_files.setdefault(p.name,[]).append(p)
+def open_url(url,timeout=45):
+ return urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':'TtroClient-QA/0.3.0-alpha.1 (+https://github.com/totoro0419/TtroClient)'}),timeout=timeout)
 def get(url,path,expected=None,algorithm='sha1'):
  path=Path(path);path.parent.mkdir(parents=True,exist_ok=True)
- if path.is_symlink():path.unlink()
+ temp=path.with_name(path.name+'.download-'+uuid.uuid4().hex)
+ def write(data):temp.write_bytes(data);os.replace(temp,path)
  def valid(p):return p.is_file() and (expected is None or hashlib.new(algorithm,p.read_bytes()).hexdigest()==expected)
  if valid(path):return path
  if expected:
   for p in cache_files.get(path.name,[]):
-   if valid(p):shutil.copy2(p,path);return path
- data=urllib.request.urlopen(url.replace('http://','https://'),timeout=45).read()
+   if valid(p):write(p.read_bytes());return path
+ data=open_url(url.replace('http://','https://')).read()
  if expected and hashlib.new(algorithm,data).hexdigest()!=expected:raise ValueError('Hash mismatch '+path.name)
- path.write_bytes(data);return path
+ write(data);return path
 base='https://maven.minecraftforge.net/net/minecraftforge/forge/1.8.9-11.15.1.2318-1.8.9/forge-1.8.9-11.15.1.2318-1.8.9'
 for suffix,name in [('-installer.jar','forge-installer.jar'),('-universal.jar','forge-universal.jar')]:
- url=base+suffix; sha=urllib.request.urlopen(url+'.sha1',timeout=30).read().decode().split()[0];get(url,TOOLS/name,sha)
+ url=base+suffix; sha=open_url(url+'.sha1',30).read().decode().split()[0];get(url,TOOLS/name,sha)
 with zipfile.ZipFile(TOOLS/'forge-installer.jar') as z:forge=json.loads(z.read('install_profile.json'))['versionInfo']
 version=json.loads((CACHE/'minecraft/versionJsons/1.8.9.json').read_text())
 client=CACHE/'minecraft/net/minecraft/minecraft/1.8.9/minecraft-1.8.9.jar'
@@ -44,7 +47,7 @@ for lib in forge['libraries']:
  if path in libraries:continue
  url=lib.get('url','https://libraries.minecraft.net/').replace('http://','https://').rstrip('/')+'/'+rel
  # Forge metadata predates download hash fields; use the original Maven sidecar when offered.
- try:sha=urllib.request.urlopen(url+'.sha1',timeout=20).read().decode().split()[0]
+ try:sha=open_url(url+'.sha1',20).read().decode().split()[0]
  except Exception:sha=None
  libraries.append(path);jobs.append((url,path,sha))
 with concurrent.futures.ThreadPoolExecutor(max_workers=10) as ex:
@@ -69,7 +72,7 @@ get(url,TOOLS/'specialsource.jar')
 mouse_url='https://media.forgecdn.net/files/2287/384/MouseTweaks-2.6.2-mc1.8.9.jar'
 get(mouse_url,TOOLS/'mousetweaks.jar')
 for slug,vid,name in [('patcher','iNjGeSxM','patcher.jar'),('hypixel-mod-api','VtDhN4ZW','hypixel-mod-api.jar')]:
- v=json.load(urllib.request.urlopen('https://api.modrinth.com/v2/version/'+vid,timeout=30));f=next(f for f in v['files'] if f['primary']);get(f['url'],TOOLS/name,f['hashes']['sha512'],'sha512')
+ v=json.load(open_url('https://api.modrinth.com/v2/version/'+vid,30));f=next(f for f in v['files'] if f['primary']);get(f['url'],TOOLS/name,f['hashes']['sha512'],'sha512')
 metadata=json.loads((ROOT/'research/archive-alpha2/external-stack-result.json').read_text())['official_cache_metadata']
 for key,name in [('release','oneconfig-release.jar'),('loader','oneconfig-loader.jar')]:get(metadata[key]['url'],TOOLS/name,metadata[key]['sha256'],'sha256')
 mp=TOOLS/'oneconfig-metadata.json'
