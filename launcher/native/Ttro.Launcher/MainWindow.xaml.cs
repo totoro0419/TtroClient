@@ -123,14 +123,17 @@ public partial class MainWindow : Window
   else
   {
    var toggle = new CheckBox { Content = "Enable " + entry.Name, IsChecked = values["enabled"]!.GetValue<bool>(), IsEnabled = available };
-   toggle.Click += (_, _) => Local(() => { store.SetValue(entry.Id, "enabled", JsonValue.Create(toggle.IsChecked == true)!); entry.Status = toggle.IsChecked == true ? "ON" : "OFF"; Status.Text = "Saved " + entry.Name + ". Changes apply on the next launch."; DrawCrosshair(); }); ModuleContext.Children.Add(toggle);
+   RoutedEventHandler saveToggle = (_, _) => Local(() => { store.SetValue(entry.Id, "enabled", JsonValue.Create(toggle.IsChecked == true)!); entry.Status = toggle.IsChecked == true ? "ON" : "OFF"; Status.Text = "Saved " + entry.Name + ". Changes apply on the next launch."; DrawCrosshair(); });
+   toggle.Checked += saveToggle; toggle.Unchecked += saveToggle; ModuleContext.Children.Add(toggle);
   }
   foreach (var pair in meta["settings"]!.AsObject())
   {
    var key = pair.Key; var def = pair.Value!; var label = new Label { Content = key }; ModuleContext.Children.Add(label);
    if (def["type"]!.GetValue<string>() == "boolean")
    {
-    var box = new CheckBox { Content = key, IsChecked = values[key]!.GetValue<bool>(), IsEnabled = available }; box.Click += (_, _) => Local(() => store.SetValue(entry.Id, key, JsonValue.Create(box.IsChecked == true)!)); label.Target = box; ModuleContext.Children.Add(box);
+    var box = new CheckBox { Content = key, IsChecked = values[key]!.GetValue<bool>(), IsEnabled = available };
+    RoutedEventHandler saveBoolean = (_, _) => Local(() => store.SetValue(entry.Id, key, JsonValue.Create(box.IsChecked == true)!));
+    box.Checked += saveBoolean; box.Unchecked += saveBoolean; label.Target = box; ModuleContext.Children.Add(box);
    }
    else if (def["type"]!.GetValue<string>() == "select")
    {
