@@ -2,7 +2,7 @@
 The QA Mod never enters product packages. Needs Xvfb, real 1.8.9 runtime,
 JDK 8, official MCP mappings and upstream real Forge compile API.
 """
-import argparse,os,subprocess,shutil,time,zipfile,json,sys,tempfile,secrets
+import argparse,os,subprocess,shutil,time,zipfile,json,sys,tempfile,secrets,hashlib
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];WORK=ROOT.parent
 parser=argparse.ArgumentParser();parser.add_argument('--game',default='qa-final-smoke');parser.add_argument('--fast',action='store_true');parser.add_argument('--baseline',action='store_true');parser.add_argument('--patcher',action='store_true');parser.add_argument('--inventory-only',action='store_true');parser.add_argument('--bench-only',action='store_true');parser.add_argument('--fps',type=int,default=60);parser.add_argument('--pairs',type=int,default=1);parser.add_argument('--packs',action='store_true');args=parser.parse_args()
@@ -68,6 +68,11 @@ if result.exists():
  for capture in captures:
   with Image.open(capture) as picture:picture.verify()
  data['screenshot_validation']={'status':'PASS','png_count':len(captures)}
+ data['launch']={'exit_code':run.returncode,'test_seconds':round(time.monotonic()-start,1),'fps_limit':args.fps,'patcher':args.patcher,'packs':args.packs,'baseline':args.baseline}
+ if not args.baseline:
+  data['artifact_sha256']=hashlib.sha256((mods/name).read_bytes()).hexdigest()
+  expected=json.loads((ROOT/'launcher/payload/client-manifest.json').read_text())['sha256']
+  if data['artifact_sha256']!=expected:raise ValueError('QA runtime payload does not match packaged client manifest')
  (target/'result.json').write_text(json.dumps(data,indent=2)+'\n')
  if any(c['status']=='FAIL' for c in checks):raise SystemExit(1)
 else:raise RuntimeError('No real game QA result. See '+str(log))

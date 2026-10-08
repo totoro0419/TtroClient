@@ -97,8 +97,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Restore official Forge compile API
-        run: python tools/build.py
+      - name: Restore official Forge compile API without replacing tested client payload
+        working-directory: forge
+        run: bash gradlew clean build --no-daemon
       - name: Virtual desktop and real runtime dependencies
         run: |
           sudo apt-get update
