@@ -64,8 +64,55 @@ jobs:
             dist/TtroClient-Portable.zip
             dist/checksums.txt
             dist/ttro-client-1.8.9-*.jar
-            research/windows-ui-smoke.json
           if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TtroClient-QA-windows
+          path: research/windows-ui-smoke.json
+          if-no-files-found: error
+  game:
+    runs-on: ubuntu-24.04
+    needs: client
+    timeout-minutes: 20
+    env:
+      GRADLE_USER_HOME: ${{ github.workspace }}/../toolchain/gradle-home
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: client-payload
+          path: launcher/payload
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '8'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Restore official Forge compile API
+        run: python tools/build.py
+      - name: Virtual desktop and real runtime dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb x11-xserver-utils libxtst6 libgl1-mesa-dri libglx-mesa0
+          pip install Pillow
+          python tools/bootstrap_game_qa.py
+      - name: Settings, HUD and official Mod API smoke
+        run: python tools/game_qa.py --game qa-alpha3-native --fast
+      - name: Official Mouse Tweaks reference with actual window input
+        run: python tools/game_qa.py --game qa-alpha3-baseline --baseline --inventory-only
+      - name: Patcher, inventory, HeadFX, world and pack regression
+        run: python tools/game_qa.py --game qa-alpha3-stack --patcher --packs
+      - name: Paired software-renderer frametime samples
+        run: python tools/game_qa.py --game qa-alpha3-benchmark --bench-only --fps 0 --pairs 2
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: TtroClient-QA-game
+          path: |
+            research/game-qa/qa-alpha3-*/
+            research/qa-alpha3-*.log
+          if-no-files-found: warn
   web:
     runs-on: ubuntu-24.04
     steps:

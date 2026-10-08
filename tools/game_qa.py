@@ -6,7 +6,7 @@ import argparse,os,subprocess,shutil,time,zipfile,json,sys,tempfile,secrets
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];WORK=ROOT.parent
 parser=argparse.ArgumentParser();parser.add_argument('--game',default='qa-final-smoke');parser.add_argument('--fast',action='store_true');parser.add_argument('--baseline',action='store_true');parser.add_argument('--patcher',action='store_true');parser.add_argument('--inventory-only',action='store_true');parser.add_argument('--bench-only',action='store_true');parser.add_argument('--fps',type=int,default=60);parser.add_argument('--pairs',type=int,default=1);parser.add_argument('--packs',action='store_true');args=parser.parse_args()
-JDK=WORK/'toolchain/jdk8u504-b01/bin'
+JDK=Path(os.environ.get('JAVA_HOME',WORK/'toolchain/jdk8u504-b01'))/'bin'
 gradle_cache=Path(os.environ.get('GRADLE_USER_HOME',Path.home()/'.gradle'))/'caches/minecraft'
 api=Path(os.environ.get('TTRO_FORGE_API',gradle_cache/'net/minecraftforge/forge/1.8.9-11.15.1.2318-1.8.9/stable/22/forgeBin-1.8.9-11.15.1.2318-1.8.9.jar'))
 if not api.exists():raise RuntimeError('Run the standard ForgeGradle build first, or supply TTRO_FORGE_API as a real Forge 2318 MCP stable_22 API JAR')
