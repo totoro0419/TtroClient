@@ -14,6 +14,7 @@ public sealed class Profile
     public string[] JvmArguments { get; set; } = [];
     public List<string> Packs { get; set; } = [];
     public Dictionary<string, string> ManagedMods { get; set; } = [];
+    public List<InstalledContentRecord> Content { get; set; } = [];
     public override string ToString() => Name;
 }
 
@@ -57,7 +58,10 @@ public sealed class ProfileStore
         foreach (var a in profile.JvmArguments)
             if (a.Any(char.IsWhiteSpace) || !(a.StartsWith("-XX:") || a.StartsWith("-Dfile.encoding=") || a.StartsWith("-Djava.net.preferIPv4Stack=")))
                 throw new InvalidDataException("JVM options must be individual GC/runtime flags; authentication and classpath overrides are not accepted.");
-        foreach (var n in profile.Packs.Concat(profile.ManagedMods.Keys)) SafeName(n);
+        foreach (var n in profile.Packs.Concat(profile.ManagedMods.Keys).Concat(profile.Content.Select(c => c.File))) SafeName(n);
+        if (profile.Content.GroupBy(c => c.Kind + ":" + c.ProjectId).Any(g => g.Count() > 1)) throw new InvalidDataException("Duplicate managed project record.");
+        foreach (var c in profile.Content)
+            if (c.Provider != "modrinth" || c.Kind is not ("mod" or "resourcepack") || string.IsNullOrEmpty(c.ProjectId) || string.IsNullOrEmpty(c.VersionId) || c.Sha512.Length != 128 || !c.Sha512.All(Uri.IsHexDigit)) throw new InvalidDataException("Invalid managed content record.");
     }
     public static string SafeName(string name)
     {
@@ -126,5 +130,5 @@ public sealed class ProfileStore
         var dest = Path.Combine(dir, DateTime.UtcNow.ToString("yyyyMMdd-HHmmss") + "-" + Guid.NewGuid().ToString("N") + "-" + Path.GetFileName(file));
         if (File.Exists(file)) File.Copy(file, dest); return dest;
     }
-    public static string Hash(string path) => Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path))).ToLowerInvariant();
+    public static string Hash(string path) { using var stream = File.OpenRead(path); return Convert.ToHexString(SHA256.HashData(stream)).ToLowerInvariant(); }
 }

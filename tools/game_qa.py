@@ -5,7 +5,7 @@ JDK 8, official MCP mappings and upstream real Forge compile API.
 import argparse,os,subprocess,shutil,time,zipfile,json,sys,tempfile,secrets,hashlib
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];WORK=ROOT.parent
-parser=argparse.ArgumentParser();parser.add_argument('--game',default='qa-final-smoke');parser.add_argument('--fast',action='store_true');parser.add_argument('--baseline',action='store_true');parser.add_argument('--patcher',action='store_true');parser.add_argument('--inventory-only',action='store_true');parser.add_argument('--bench-only',action='store_true');parser.add_argument('--fps',type=int,default=60);parser.add_argument('--pairs',type=int,default=1);parser.add_argument('--packs',action='store_true');args=parser.parse_args()
+parser=argparse.ArgumentParser();parser.add_argument('--game',default='qa-final-smoke');parser.add_argument('--fast',action='store_true');parser.add_argument('--baseline',action='store_true');parser.add_argument('--patcher',action='store_true');parser.add_argument('--inventory-only',action='store_true');parser.add_argument('--bench-only',action='store_true');parser.add_argument('--fps',type=int,default=60);parser.add_argument('--pairs',type=int,default=1);parser.add_argument('--packs',action='store_true');parser.add_argument('--native-packs',action='store_true');args=parser.parse_args()
 JDK=Path(os.environ.get('JAVA_HOME',WORK/'toolchain/jdk8u504-b01'))/'bin'
 gradle_cache=Path(os.environ.get('GRADLE_USER_HOME',Path.home()/'.gradle'))/'caches/minecraft'
 api=Path(os.environ.get('TTRO_FORGE_API',gradle_cache/'net/minecraftforge/forge/1.8.9-11.15.1.2318-1.8.9/stable/22/forgeBin-1.8.9-11.15.1.2318-1.8.9.jar'))
@@ -38,11 +38,14 @@ else:
    dest=game/'OneConfig'/target;dest.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(payload,dest)
   (game/'OneConfig/OneConfig.json').write_text(json.dumps({'autoUpdate':True,'updateChannel':0}))
 if args.packs:
- sys.path.insert(0,str(ROOT/'launcher'));from core import Store
- with tempfile.TemporaryDirectory(prefix='ttro-qa-packs-') as directory:
-  store=Store(directory);pid=store.state()['selected']
-  for name in ['qa-pack-low.zip','qa-pack-high.zip']:store.import_content(pid,name,(ROOT/'tests/fixtures'/name).read_bytes(),'resourcepack')
-  store.content_action(pid,'qa-pack-high.zip','up');shutil.copytree(store.game(pid)/'resourcepacks',game/'resourcepacks',dirs_exist_ok=True);shutil.copy2(store.game(pid)/'options.txt',game/'options.txt')
+ if args.native_packs:
+  subprocess.run(['dotnet','run','--project',str(ROOT/'tests/native/Ttro.Launcher.Tests.csproj'),'-c','Release','--','--export-game-packs',str(game)],check=True)
+ else:
+  sys.path.insert(0,str(ROOT/'launcher'));from core import Store
+  with tempfile.TemporaryDirectory(prefix='ttro-qa-packs-') as directory:
+   store=Store(directory);pid=store.state()['selected']
+   for name in ['qa-pack-low.zip','qa-pack-high.zip']:store.import_content(pid,name,(ROOT/'tests/fixtures'/name).read_bytes(),'resourcepack')
+   store.content_action(pid,'qa-pack-high.zip','up');shutil.copytree(store.game(pid)/'resourcepacks',game/'resourcepacks',dirs_exist_ok=True);shutil.copy2(store.game(pid)/'options.txt',game/'options.txt')
 log=ROOT/'research'/(args.game+'.log');gc=ROOT/'research'/(args.game+'-gc.log');start=time.monotonic()
 with log.open('w') as output,(ROOT/'research/xvfb.log').open('w') as xlog:
  display=200+secrets.randbelow(4000)
@@ -68,6 +71,8 @@ if result.exists():
  for capture in captures:
   with Image.open(capture) as picture:picture.verify()
  data['screenshot_validation']={'status':'PASS','png_count':len(captures)}
+ if args.native_packs:
+  data['native_pack_provenance']=json.loads((game/'native-pack-provenance.json').read_text())
  data['launch']={'exit_code':run.returncode,'test_seconds':round(time.monotonic()-start,1),'fps_limit':args.fps,'patcher':args.patcher,'packs':args.packs,'baseline':args.baseline}
  if not args.baseline:
   data['artifact_sha256']=hashlib.sha256((mods/client_name).read_bytes()).hexdigest()

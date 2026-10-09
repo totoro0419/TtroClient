@@ -21,3 +21,5 @@ research/archive-alpha2/**/smoke-screenshots/
 research/downloads/
 research/game-qa/
 research/current-windows-qa/*.png
+
+*_wpftmp.csproj

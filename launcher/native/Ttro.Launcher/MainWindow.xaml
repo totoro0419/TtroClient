@@ -1,4 +1,4 @@
-<Window x:Class="Ttro.Launcher.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Ttro Client" Width="1100" Height="760" MinWidth="620" MinHeight="500" Background="{DynamicResource Surface}" Foreground="{DynamicResource Ink}" FontSize="15" Loaded="WindowLoaded" Closing="WindowClosing">
+<Window x:Class="Ttro.Launcher.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:Ttro.Launcher" Title="Ttro Client" Width="1100" Height="760" MinWidth="620" MinHeight="500" Background="{DynamicResource Surface}" Foreground="{DynamicResource Ink}" FontSize="15" Loaded="WindowLoaded" Closing="WindowClosing">
  <Grid Margin="20">
   <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
   <DockPanel Margin="0,0,0,16">
@@ -28,14 +28,8 @@
     <Canvas x:Name="CrosshairPreview" Width="220" Height="160" Background="#FFE1E9E0" HorizontalAlignment="Left" AutomationProperties.Name="Visual crosshair preview"/>
     <TextBlock Text="This preview represents crosshair shape, size and gap. HeadFX and server UI previews must be checked in Minecraft." TextWrapping="Wrap" Margin="0,12"/>
    </StackPanel></ScrollViewer></TabItem>
-   <TabItem Header="LIBRARY"><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="16">
-    <WrapPanel><ComboBox x:Name="ContentKind" Width="190" SelectionChanged="ContentKindChanged" SelectedIndex="0" AutomationProperties.Name="Content type"><ComboBoxItem Content="Resource Packs" Tag="resourcepack"/><ComboBoxItem Content="Mods" Tag="mod"/></ComboBox><Button Content="Import local file" Click="ImportClick"/><Button Content="Refresh" Click="ContentRefreshClick"/></WrapPanel>
-    <TextBlock Text="Active packs are listed highest priority first. Changes apply on the next launch. Deleted files are backed up." TextWrapping="Wrap" Margin="4,8"/>
-    <ListBox x:Name="ContentList" MinHeight="130" MaxHeight="240" AutomationProperties.Name="Installed content"/>
-    <WrapPanel><Button Content="Enable / Disable" Click="ContentToggleClick"/><Button Content="Move up" Click="PackUpClick"/><Button Content="Move down" Click="PackDownClick"/><Button Content="Preview" Click="PreviewClick"/><Button Content="Delete" Click="DeleteClick"/></WrapPanel>
-    <TextBlock x:Name="ContentEmpty" Text="No content installed. Import a file or search below." TextWrapping="Wrap" Margin="4,8"/>
-    <WrapPanel><TextBox x:Name="ContentQuery" Width="230" AutomationProperties.Name="Search Modrinth for 1.8.9 content" KeyDown="ContentQueryKeyDown"/><Button Content="Search 1.8.9 content" Click="ContentSearchClick"/><Button Content="Install selected result" Click="ContentInstallClick"/></WrapPanel>
-    <ListBox x:Name="SearchResults" MinHeight="100" MaxHeight="230" AutomationProperties.Name="Compatible search results"/>
+   <TabItem Header="LIBRARY"><Grid><Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions><local:LibraryView x:Name="Library"/>
+    <ScrollViewer Grid.Row="1" MaxHeight="240" VerticalScrollBarVisibility="Auto"><StackPanel Margin="16,0,16,8">
     <Expander Header="Profile and performance" Margin="0,18,0,0"><StackPanel>
      <WrapPanel><TextBox x:Name="ProfileName" Width="200" Text="Custom" AutomationProperties.Name="New profile name"/><Button Content="Create profile" Click="ProfileAddClick"/></WrapPanel>
      <TextBlock Text="RAM (MiB)" Margin="4,8,4,0"/><TextBox x:Name="Ram" AutomationProperties.Name="Maximum memory in MiB"/>
@@ -44,7 +38,7 @@
      <Button Content="Save profile settings" Click="SaveProfileClick" HorizontalAlignment="Left"/>
     </StackPanel></Expander>
     <WrapPanel Margin="0,16,0,0"><Button Content="Logs / Crashes" Click="LogsClick"/><Button Content="Sign out" Click="SignOutClick"/><Button Content="GitHub" Click="GitHubClick"/></WrapPanel>
-   </StackPanel></ScrollViewer></TabItem>
+   </StackPanel></ScrollViewer></Grid></TabItem>
   </TabControl>
   <StackPanel Grid.Row="2" Margin="0,16,0,0">
    <ProgressBar x:Name="Progress" Height="5" Visibility="Collapsed" IsIndeterminate="True"/>

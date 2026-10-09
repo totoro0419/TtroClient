@@ -45,6 +45,13 @@ jobs:
           python-version: '3.12'
       - name: Native core regression
         run: dotnet run --project tests/native/Ttro.Launcher.Tests.csproj -c Release
+        env:
+          TTRO_CONTENT_QA_REPORT: research/content-core-qa.json
+      - name: Build test-only WPF content host
+        run: dotnet build tests/library-ui/Ttro.Library.Qa.csproj -c Release
+      - name: Real WPF content browsing and installation QA
+        shell: pwsh
+        run: ./tests/windows_library_qa.ps1
       - name: Restore native dependencies and collect notices
         run: |
           dotnet restore launcher/native/Ttro.Launcher/Ttro.Launcher.csproj -r win-x64
@@ -95,6 +102,8 @@ jobs:
           path: |
             research/windows-*-smoke.json
             research/windows-context.png
+            research/windows-library-*.png
+            research/content-core-qa.json
           if-no-files-found: error
   game:
     runs-on: ubuntu-24.04
@@ -115,6 +124,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
       - name: Restore official Forge compile API without replacing tested client payload
         working-directory: forge
         run: bash gradlew clean build --no-daemon
@@ -129,7 +141,7 @@ jobs:
       - name: Official Mouse Tweaks reference with actual window input
         run: python tools/game_qa.py --game qa-alpha3-baseline --baseline --inventory-only
       - name: Patcher, inventory, HeadFX, world and pack regression
-        run: python tools/game_qa.py --game qa-alpha3-stack --patcher --packs
+        run: python tools/game_qa.py --game qa-alpha3-stack --patcher --packs --native-packs
       - name: Paired software-renderer frametime samples
         run: python tools/game_qa.py --game qa-alpha3-benchmark --bench-only --fps 0 --pairs 2
       - name: Verify upstream inventory equivalence and packaged payload hashes

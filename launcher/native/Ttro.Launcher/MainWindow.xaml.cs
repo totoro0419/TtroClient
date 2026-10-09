@@ -38,20 +38,23 @@ public partial class MainWindow : Window
    var root = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TtroClient189", "native");
    store = new ProfileStore(root, System.IO.Path.Combine(AppContext.BaseDirectory, "modules.json"));
    content = new ContentService(store); auth = new AuthService(root, System.IO.Path.Combine(AppContext.BaseDirectory, "launcher-settings.json")); game = new GameService(store, auth);
-   ready = true; RefreshProfiles(); RefreshModules(); RefreshContent(); Profiles.Focus();
+   Library.Initialize(store, content);
+   Library.Changed += message => { Status.Text = message; RefreshModules(); };
+   Library.BusyChanged += busy => { Profiles.IsEnabled = LoginButton.IsEnabled = PlayButton.IsEnabled = !busy; };
+   ready = true; RefreshProfiles(); RefreshModules(); Library.RefreshProfile(); Profiles.Focus();
    if (!auth.Configured) Status.Text = "Development alpha: Microsoft sign-in is not configured for this build. Settings and local content management are available.";
   }
   catch (Exception ex) { Status.Text = "Startup failed: " + ex.Message; PlayButton.IsEnabled = false; LoginButton.IsEnabled = false; Workspace.IsEnabled = false; }
  }
  private async Task RunAsync(Func<CancellationToken, Task> task)
  {
-  if (!ready || operation is not null) return;
+  if (!ready || operation is not null || Library.IsMutating) return;
   operation = new CancellationTokenSource(); Progress.Visibility = Visibility.Visible; CancelButton.Visibility = Visibility.Visible;
   Workspace.IsEnabled = false; Profiles.IsEnabled = false; LoginButton.IsEnabled = false;
   try { await task(operation.Token); }
   catch (OperationCanceledException) { Status.Text = "Preparation cancelled. Your profiles and worlds have been preserved."; }
   catch (Exception ex) { Status.Text = "Unable to complete this action: " + ex.Message + " Retry the action after correcting the issue."; }
-  finally { operation.Dispose(); operation = null; Progress.Visibility = Visibility.Collapsed; CancelButton.Visibility = Visibility.Collapsed; Workspace.IsEnabled = true; Profiles.IsEnabled = true; LoginButton.IsEnabled = true; RefreshModules(); RefreshContent(); }
+  finally { operation.Dispose(); operation = null; Progress.Visibility = Visibility.Collapsed; CancelButton.Visibility = Visibility.Collapsed; Workspace.IsEnabled = true; Profiles.IsEnabled = true; LoginButton.IsEnabled = true; RefreshModules(); Library.RefreshProfile(); }
  }
  private void Local(Action action)
  {
@@ -64,6 +67,7 @@ public partial class MainWindow : Window
  private void CancelClick(object sender, RoutedEventArgs e) => operation?.Cancel();
  private void WindowClosing(object? sender, System.ComponentModel.CancelEventArgs e)
  {
+  if (Library.IsMutating) { e.Cancel = true; Library.CancelOperation(); Status.Text = "Cancelling content installation. Close again after it stops."; }
   if (operation is not null && store?.GameRunning != true) { e.Cancel = true; operation.Cancel(); Status.Text = "Cancelling preparation. Close the launcher again after it stops."; }
  }
  private void RefreshProfiles()
@@ -77,9 +81,9 @@ public partial class MainWindow : Window
  private void ProfileChanged(object sender, SelectionChangedEventArgs e)
  {
   if (!ready || Profiles.SelectedItem is not Profile p) return;
-  Local(() => { store!.Select(p); RefreshProfiles(); RefreshModules(); RefreshContent(); Status.Text = "Profile selected: " + p.Name; });
+  Local(() => { store!.Select(p); RefreshProfiles(); RefreshModules(); Library.RefreshProfile(); Status.Text = "Profile selected: " + p.Name; });
  }
- private void ProfileAddClick(object sender, RoutedEventArgs e) => Local(() => { store!.Add(ProfileName.Text); RefreshProfiles(); RefreshModules(); RefreshContent(); Status.Text = "Profile created."; });
+ private void ProfileAddClick(object sender, RoutedEventArgs e) => Local(() => { store!.Add(ProfileName.Text); RefreshProfiles(); RefreshModules(); Library.RefreshProfile(); Status.Text = "Profile created."; });
  private void SaveProfileClick(object sender, RoutedEventArgs e) => Local(() =>
  {
   if (!int.TryParse(Ram.Text, out var ram)) throw new InvalidDataException("Enter RAM as a whole number of MiB.");
@@ -148,7 +152,7 @@ public partial class MainWindow : Window
    }
   }
  }
- private void WorkspaceChanged(object sender, SelectionChangedEventArgs e) { if (ready && e.Source == Workspace) { DrawCrosshair(); RefreshContent(); } }
+ private void WorkspaceChanged(object sender, SelectionChangedEventArgs e) { if (ready && e.Source == Workspace) { DrawCrosshair(); Library.RefreshProfile(); } }
  private void HudLayoutChanged(object sender, SelectionChangedEventArgs e)
  {
   if (!ready || HudLayout.SelectedItem is not ComboBoxItem selected) return;
@@ -162,32 +166,6 @@ public partial class MainWindow : Window
   void Rect(double x, double y, double w, double h) { var r = new Rectangle { Width = w, Height = h, Fill = SystemColors.WindowTextBrush }; Canvas.SetLeft(r, x); Canvas.SetTop(r, y); CrosshairPreview.Children.Add(r); }
   if (shape == "dot") Rect(109, 79, 3, 3); else { Rect(110-gap-size,79,size,2); Rect(110+gap,79,size,2); Rect(109,80+gap,2,size); if (shape != "t") Rect(109,80-gap-size,2,size); }
  }
- private string Kind => (ContentKind?.SelectedItem as ComboBoxItem)?.Tag.ToString() ?? "resourcepack";
- private string SelectedFile() => ContentList.SelectedItem as string ?? throw new InvalidOperationException("Select installed content first.");
- private void ContentKindChanged(object sender, SelectionChangedEventArgs e) { if (ready) RefreshContent(); }
- private void ContentRefreshClick(object sender, RoutedEventArgs e) => RefreshContent();
- private void RefreshContent()
- {
-  if (!ready) return; var files = content!.Files(Kind); ContentList.ItemsSource = Kind == "resourcepack" ? store!.Current.Packs.Concat(files.Where(f => !store.Current.Packs.Contains(f))).ToArray() : files;
-  ContentEmpty.Visibility = files.Length == 0 ? Visibility.Visible : Visibility.Collapsed;
- }
- private void ImportClick(object sender, RoutedEventArgs e) => Local(() => { var dialog = new OpenFileDialog { Filter = Kind == "mod" ? "Forge 1.8.9 mod|*.jar" : "Minecraft 1.8.9 resource pack|*.zip" }; if (dialog.ShowDialog(this) == true) { content!.Import(dialog.FileName, Kind); RefreshContent(); RefreshModules(); Status.Text = "Content imported. Applies on the next launch."; } });
- private void ContentToggleClick(object sender, RoutedEventArgs e) => Local(() => { content!.Toggle(SelectedFile(), Kind); RefreshContent(); RefreshModules(); Status.Text = "Content state saved. Applies on the next launch."; });
- private void PackUpClick(object sender, RoutedEventArgs e) => Local(() => { if (Kind != "resourcepack") throw new InvalidOperationException("Only packs have priority order."); content!.MovePack(SelectedFile(), -1); RefreshContent(); });
- private void PackDownClick(object sender, RoutedEventArgs e) => Local(() => { if (Kind != "resourcepack") throw new InvalidOperationException("Only packs have priority order."); content!.MovePack(SelectedFile(), 1); RefreshContent(); });
- private void DeleteClick(object sender, RoutedEventArgs e) => Local(() => { var name = SelectedFile(); if (MessageBox.Show(this, "Delete " + name + "? A backup will be retained.", "Delete content", MessageBoxButton.OKCancel, MessageBoxImage.Question) == MessageBoxResult.OK) { content!.Delete(name, Kind); RefreshContent(); RefreshModules(); Status.Text = "Content deleted; backup retained."; } });
- private void PreviewClick(object sender, RoutedEventArgs e) => Local(() =>
- {
-  var file = System.IO.Path.Combine(content!.DirectoryFor(Kind), SelectedFile()); using var zip = ZipFile.OpenRead(file); var icon = zip.GetEntry("pack.png");
-  var panel = new StackPanel { Margin = new Thickness(20) }; panel.Children.Add(new TextBlock { Text = System.IO.Path.GetFileName(file), TextWrapping = TextWrapping.Wrap, FontSize = 20 });
-  if (icon is not null && icon.Length <= 4*1024*1024) { using var stream = icon.Open(); var image = new BitmapImage(); image.BeginInit(); image.CacheOption = BitmapCacheOption.OnLoad; image.DecodePixelWidth = 320; image.StreamSource = stream; image.EndInit(); image.Freeze(); panel.Children.Add(new Image { Source = image, MaxHeight = 320, Margin = new Thickness(0, 16, 0, 0) }); }
-  else panel.Children.Add(new TextBlock { Text = "This archive contains no supported preview image.", TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0,16,0,0) });
-  var dialog = new Window { Title = "Content preview", Owner = this, Width = 420, Height = 440, Content = panel, Background = SystemColors.WindowBrush }; dialog.PreviewKeyDown += (_, k) => { if (k.Key == Key.Escape) dialog.Close(); }; dialog.ShowDialog();
- });
- private async void ContentQueryKeyDown(object sender, KeyEventArgs e) { if (e.Key == Key.Enter) { e.Handled = true; await Search(); } }
- private async void ContentSearchClick(object sender, RoutedEventArgs e) => await Search();
- private async Task Search() => await RunAsync(async ct => { Status.Text = "Searching compatible 1.8.9 content…"; SearchResults.ItemsSource = await content!.SearchAsync(ContentQuery.Text, Kind, ct); Status.Text = SearchResults.Items.Count == 0 ? "No results. Try another search." : "Select a result and install it. Compatible dependencies are resolved before changes are applied."; });
- private async void ContentInstallClick(object sender, RoutedEventArgs e) => await RunAsync(async ct => { if (SearchResults.SelectedItem is not SearchHit hit) throw new InvalidOperationException("Select a search result first."); Status.Text = "Downloading and verifying " + hit.Title + "…"; await content!.InstallProjectAsync(hit.ProjectId, hit.Kind, ct); Status.Text = "Content installed and verified. Applies on next launch."; });
  private async void IntegrationsClick(object sender, RoutedEventArgs e) => await RunAsync(async ct => { Status.Text = "Installing audited PolyPatcher 1.10.4 and Hypixel Mod API 1.0.2 from Modrinth…"; await content!.InstallProjectAsync("patcher", "mod", ct, "iNjGeSxM"); await content.InstallProjectAsync("hypixel-mod-api", "mod", ct, "VtDhN4ZW"); Status.Text = "Recommended integrations installed. Restart Minecraft to load them."; });
  private async void UpdateCheckClick(object sender, RoutedEventArgs e) => await RunAsync(async ct => { Status.Text = "Checking official releases…"; update = await UpdateService.CheckAsync(ct); UpdateButton.IsEnabled = update is not null; Status.Text = update is null ? "No newer installable release is available." : "Ttro Client " + update.Version + " is available. Update & Restart downloads and verifies the official installer."; });
  private async void UpdateClick(object sender, RoutedEventArgs e) => await RunAsync(async ct => { if (update is null) throw new InvalidOperationException("Check for updates first."); var installer = await UpdateService.DownloadAsync(update, store!.Root, ct); Process.Start(new ProcessStartInfo(installer, "/S /RESTART") { UseShellExecute = true }); Application.Current.Shutdown(); });

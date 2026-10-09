@@ -2,6 +2,7 @@ using Ttro.Launcher.Core;
 using System.IO.Compression;
 using System.Text.Json.Nodes;
 
+if (args.Length == 2 && args[0] == "--export-game-packs") { await GamePackQa.Export(Path.Combine(AppContext.BaseDirectory, "modules.json"), Path.GetFullPath(args[1])); return; }
 var root = Path.Combine(Path.GetTempPath(), "ttro-tests-" + Guid.NewGuid().ToString("N"));
 Directory.CreateDirectory(root); int checks = 0;
 void Check(bool value, string name) { if (!value) throw new Exception(name); checks++; Console.WriteLine("PASS " + name); }
@@ -41,6 +42,8 @@ try
  Reject(() => UpdateService.ParseHash(new string('a', 64) + "  TtroClient-Setup.exe\n" + new string('b', 64) + "  TtroClient-Setup.exe", "TtroClient-Setup.exe"), "ambiguous checksum rejected");
  var future = Path.Combine(root, "future"); Directory.CreateDirectory(future); var file = Path.Combine(future, "launcher.json"); var original = "{\"Schema\":99}"; File.WriteAllText(file, original);
  Reject(() => new ProfileStore(future, catalog), "unknown schema fails closed"); Check(File.ReadAllText(file) == original, "unknown schema preserves file");
- Console.WriteLine($"{checks} checks passed.");
+ await ContentQa.Run(catalog);
+ if (args.Contains("--live-content")) await LiveContentQa.Run(catalog);
+ Console.WriteLine($"{checks} original core checks passed.");
 }
 finally { Directory.Delete(root, true); }
