@@ -49,6 +49,24 @@ jobs:
         run: |
           dotnet restore launcher/native/Ttro.Launcher/Ttro.Launcher.csproj -r win-x64
           python tools/native_notices.py
+      - name: Configure dedicated Microsoft public client ID
+        shell: pwsh
+        env:
+          TTRO_PUBLIC_CLIENT_ID: ${{ vars.TTRO_MICROSOFT_CLIENT_ID }}
+        run: |
+          $path = 'launcher/native/Ttro.Launcher/launcher-settings.json'
+          $settings = Get-Content $path -Raw | ConvertFrom-Json
+          if ([string]::IsNullOrWhiteSpace($env:TTRO_PUBLIC_CLIENT_ID)) {
+            Write-Host 'Ttro OAuth app ID not configured. CI may run, but the release gate will reject this build.'
+          } else {
+            $parsed = [guid]::Empty
+            if (-not [guid]::TryParse($env:TTRO_PUBLIC_CLIENT_ID, [ref]$parsed) -or $parsed -eq [guid]::Empty) {
+              throw 'Invalid Ttro OAuth application ID: expected a non-empty GUID.'
+            }
+            $settings.microsoftClientId = $parsed.ToString()
+            $settings | ConvertTo-Json -Depth 4 | Set-Content -Path $path -Encoding utf8
+            Write-Host 'Ttro public client application ID configured for Windows artifact.'
+          }
       - name: Self-contained Windows launcher
         run: dotnet publish launcher/native/Ttro.Launcher/Ttro.Launcher.csproj -c Release -r win-x64 --self-contained true -o dist/portable
       - name: Native Windows UI smoke

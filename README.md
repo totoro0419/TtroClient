@@ -4,6 +4,8 @@ Minecraft Java Edition **1.8.9 / Forge 11.15.1.2318 / Java 8**向けPvP Client�
 
 Windows製品経路は `TtroClient-Setup.exe → Ttro Client → Microsoft Login → Profile → PLAY`。WPF / .NET 8のネイティブLauncherを自己完結配布します。ユーザー側のPython、Prism、.NET手動インストールは不要です。Minecraft・Forge・JavaはLauncherが上流から取得します。世界・設定は `%LOCALAPPDATA%\TtroClient189\native\profiles` に分離します。
 
+**公開版の認証設定:** [Microsoft Login登録・配布Gate手順](docs/MICROSOFT_AUTH_SETUP.md) に従い、Ttro専用のMicrosoft public-client applicationを登録し、GitHub Repository Variablesの `TTRO_MICROSOFT_CLIENT_ID` にApplication (client) IDを設定すると、Windows CIが配布Launcherへ埋め込みます。既存プレビューを後から修復する設定ではなく、再ビルドが必要です。Release Draft作成はGUID未設定のPortableを拒否します。
+
 **現時点の起動制限:** Ttro Client専用Microsoft OAuth application IDは未提供です。登録済みの自社application IDを `launcher/native/Ttro.Launcher/launcher-settings.json` に製品設定する必要があります。Windows Microsoft認証からPLAYまでの実機検証も未完了です。認証できる完成品と誤認してこのalphaを配布しないでください。メンテナー用の環境変数は `TTRO_MICROSOFT_CLIENT_ID`。Mojangのapplication IDを流用しません。
 
 内蔵22機能、Patcher等の外部設定統合21項目、未実装候補19項目。後二者を搭載済み22機能へ加算しません。Mouse Tweaks 2.6.2由来のInventory Controls、Adaptive HUD、HeadFX、Smart Scoreboard、Modern Tab、Identity UIを統一設定から操作できます。外部連携は対応Modが必要です。ゲーム内設定は **Right Ctrl**、ZoomはC、Toggle SprintはR。

@@ -32,6 +32,25 @@ jobs:
           path: release-assets
           run-id: ${{ inputs.run_id }}
           github-token: ${{ github.token }}
+      - name: Reject unconfigured or mismatched consumer distribution
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          python - <<'PY'
+          import json, os, pathlib, re, uuid, zipfile
+          product=json.loads(pathlib.Path('launcher/product.json').read_text())
+          tag=os.environ['TAG']
+          assert tag == 'v'+product['version'], 'Release tag must match product version exactly'
+          assert re.fullmatch(r'v\\d+\\.\\d+\\.\\d+-alpha\\.\\d+', tag), 'Only alpha tags are supported'
+          with zipfile.ZipFile('release-assets/TtroClient-Portable.zip') as archive:
+              config=json.loads(archive.read('launcher-settings.json'))
+              client_id=config.get('microsoftClientId','')
+              assert uuid.UUID(client_id).int != 0, 'Ttro Microsoft app registration is required; never release a blank-ID launcher'
+              manifest=json.loads(archive.read('payload/client-manifest.json'))
+              assert product['version'] in manifest['filename'], 'Client JAR version mismatch'
+              assert archive.read('payload/'+manifest['filename']), 'Client JAR is missing'
+          print('Release-ready configuration present. This does NOT prove Microsoft Login or gameplay QA.')
+          PY
       - name: Create draft only; publication remains manual
         env:
           GH_TOKEN: ${{ github.token }}

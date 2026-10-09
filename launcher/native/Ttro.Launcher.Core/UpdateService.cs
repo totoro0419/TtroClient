@@ -23,7 +23,11 @@ public static class UpdateService
         var releases = JsonNode.Parse(await http.GetStringAsync("https://api.github.com/repos/totoro0419/TtroClient/releases?per_page=30", ct))!.AsArray();
         foreach (var r in releases)
         {
-            if (r!["draft"]!.GetValue<bool>()) continue; var version = r["tag_name"]!.GetValue<string>().TrimStart('v'); if (!Newer(version, CurrentVersion)) continue;
+            // This installation follows the reviewed alpha channel only. Never interpret a stable or unrelated prerelease as an alpha update.
+            var tag = r!["tag_name"]!.GetValue<string>();
+            if (r["draft"]!.GetValue<bool>() || r["prerelease"]?.GetValue<bool>() != true ||
+                !System.Text.RegularExpressions.Regex.IsMatch(tag, @"^v\d+\.\d+\.\d+-alpha\.\d+$", System.Text.RegularExpressions.RegexOptions.CultureInvariant)) continue;
+            var version = tag[1..]; if (!Newer(version, CurrentVersion)) continue;
             var assets = r["assets"]!.AsArray();
             var setup = assets.FirstOrDefault(a => a!["name"]!.GetValue<string>() == "TtroClient-Setup.exe");
             var sums = assets.FirstOrDefault(a => a!["name"]!.GetValue<string>() == "checksums.txt");
