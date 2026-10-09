@@ -133,7 +133,7 @@ public sealed class ContentService
         }
         if (store.Current != profile) throw new OperationCanceledException("The profile changed."); return result;
     }
-    public async Task<string?> VersionsForDetailsAsync(string id, string kind, CancellationToken ct) => Latest(await provider.VersionsAsync(id, kind, ct).ConfigureAwait(false), kind)?.Number;
+    public async Task<ContentVersion?> LatestVersionAsync(string id, string kind, CancellationToken ct) => Latest(await provider.VersionsAsync(id, kind, ct).ConfigureAwait(false), kind);
     private static ContentVersion? Latest(ContentVersion[] versions, string kind) => versions.Where(v => Compatible(v, kind) && v.VersionType == "release").OrderByDescending(v => v.Published).FirstOrDefault();
     public Task InstallProjectAsync(string id, string kind, CancellationToken ct, string? auditedVersion = null) => InstallAsync(id, kind, ct, auditedVersion, false, null);
     public Task InstallAsync(string id, string kind, CancellationToken ct, string? version = null, bool update = false, IProgress<ContentProgress>? progress = null) => InstallCoreAsync(id, kind, ct, version, update, progress);

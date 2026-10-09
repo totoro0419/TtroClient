@@ -20,3 +20,6 @@ Windows x64向けの.NET 8自己完結WPF Launcherです。Minecraft 1.8.9はFor
 Update & Restartは公式ReleaseのSetup.exeとSHA256を検証します。Repairは管理ファイルを対象とし、未知のユーザーMods/Resource Packs/Worldsを勝手に消しません。既知の問題は [KNOWN_ISSUES](KNOWN_ISSUES.md)へ。
 
 UninstallはインストールしたversionのアプリケーションDirectoryを削除します。Profile、World、Screenshots、Resource Packs、ユーザー設定は `%LOCALAPPDATA%\TtroClient189\native\` 側に保持する設計です。複数版のUninstallerと旧版Directory整理は現在の既知の問題です。
+## Resource Packs / Mods
+
+LauncherのLIBRARY → Resource Packs / Mods → DISCOVERへ。検索なしで人気順を表示します。画像を見てカードのINSTALLを一回押すと、現在のProfileへ検証して追加します。新しいPackは有効・最上位で、次のPLAY時に反映されます。INSTALLEDではON/OFF、順序、Preview、Check updates → UPDATE、Removeを操作できます。UPDATEは既存の有効状態と順序を維持します。Local Importはprovider更新対象になりません。ゲーム実行中は変更できません。

@@ -51,7 +51,9 @@ try {
  WaitFor { $null -ne (FindName 'Install QA pack1') } 'retry restores browse'
  $transform=$window.GetCurrentPattern([System.Windows.Automation.TransformPattern]::Pattern)
  $transform.Resize(620,620); Start-Sleep -Milliseconds 400
- Check ((FindName 'Install QA pack1').Current.IsEnabled) 'narrow resize retains reachable card install'
+ $scroll=(FindId 'LibraryScroll').GetCurrentPattern([System.Windows.Automation.ScrollPattern]::Pattern)
+ for ($i=0; $i -lt 10 -and (FindName 'Install QA pack1').Current.IsOffscreen; $i++) { $scroll.Scroll([System.Windows.Automation.ScrollAmount]::NoAmount,[System.Windows.Automation.ScrollAmount]::SmallIncrement); Start-Sleep -Milliseconds 80 }
+ Check ((FindName 'Install QA pack1').Current.IsEnabled -and !(FindName 'Install QA pack1').Current.IsOffscreen) 'narrow resize retains visible card install after scrolling'
  Screenshot 'windows-library-narrow'
  $transform.Resize(960,760); Start-Sleep -Milliseconds 200
  (FindId 'ContentQuery').GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue('pack1')
@@ -70,6 +72,15 @@ try {
  Click 'Fast download'
  Click 'Other profile'; Section 'Installed content'
  Check ((State).Profiles.Count -eq 2 -and (State).Profiles[1].Content.Count -eq 0) 'profile switch isolates installed library'
+ $kind=FindId 'ContentKind'; $kind.SetFocus(); [System.Windows.Forms.SendKeys]::SendWait('{END}{ENTER}'); Section 'Discover content'
+ WaitFor { $null -ne (FindName 'Install QA mod0') } 'Mods browse opens with Forge cards'
+ Click 'Install QA mod0'
+ WaitFor { (State).Profiles[1].Content.Count -eq 1 -and (State).Profiles[1].Content[0].Kind -eq 'mod' } 'Mod card one-click installation persists'
+ Section 'Installed content'
+ (FindName 'Enable QA mod0').GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern).Toggle()
+ WaitFor { (State).Profiles[1].Content[0].File -like '*.disabled' } 'Mod disabled state persists from Installed'
+ (FindName 'Enable QA mod0').GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern).Toggle()
+ WaitFor { (State).Profiles[1].Content[0].File -like '*.jar' } 'Mod enabled state restores from Installed'
  $process.CloseMainWindow() | Out-Null; Check ($process.WaitForExit(5000)) 'Library closes cleanly'
  @{ environment='Windows UI Automation / real WPF Library / deterministic provider'; checks=$checks; status='PASS'; limits=@('Provider is a fixture, not live Modrinth','No Microsoft Login or Minecraft E2E','DPI/Narrator/physical input not certified') } | ConvertTo-Json -Depth 6 | Set-Content (Join-Path $PSScriptRoot '../research/windows-library-smoke.json')
 } finally { if (!$process.HasExited) { $process.Kill(); $process.WaitForExit() }; Remove-Item -Recurse -Force $env:TTRO_LIBRARY_QA_ROOT -ErrorAction SilentlyContinue }

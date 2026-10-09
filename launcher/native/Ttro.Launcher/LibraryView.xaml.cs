@@ -67,7 +67,7 @@ public partial class LibraryView : UserControl
     {
         if (!initialized) return; offset = 0; updates.Clear(); renderedScope = null;
         PackFilters.Visibility = ResolutionFilter.Visibility = Kind == "resourcepack" ? Visibility.Visible : Visibility.Collapsed;
-        ScopeNote.Text = Kind == "resourcepack" ? "Modrinth · Minecraft 1.8.9 · INSTALL enables at highest priority. UPDATE preserves ON/OFF and priority. Applies on the next launch." : "Modrinth · Forge 1.8.9 / Java 8 · Required pinned dependencies are verified together. Changes apply on the next launch.";
+        ScopeNote.Text = Kind == "resourcepack" ? "1.8.9 · INSTALL enables at highest priority. UPDATE preserves state. Applies on the next launch." : "Forge 1.8.9 / Java 8 · Pinned dependencies are verified together. Applies on the next launch.";
         RefreshInstalled(); if (Discover) _ = LoadPageAsync(); else if (FavoritesButton.IsChecked == true) ShowFavorites();
     }
     private void SectionChanged(object sender, RoutedEventArgs e)
@@ -146,11 +146,13 @@ public partial class LibraryView : UserControl
         foreach (var hit in hits.Take(200))
         {
             var panel = new StackPanel();
-            var imageArea = new Grid { Height = 145, Margin = new Thickness(4, 4, 4, 8), Background = BrushResource(SystemColors.ControlBrushKey) };
+            var imageArea = new Grid { Height = 112, Margin = new Thickness(4, 4, 4, 8), Background = BrushResource(SystemColors.ControlBrushKey) };
             var fallback = Text("Preview unavailable", 14); fallback.VerticalAlignment = VerticalAlignment.Center; fallback.HorizontalAlignment = HorizontalAlignment.Center;
-            var image = new Image { Stretch = Stretch.Uniform, Height = 145 }; AutomationProperties.SetName(image, hit.Title + " preview");
+            var image = new Image { Stretch = Stretch.Uniform, Height = 112 }; AutomationProperties.SetName(image, hit.Title + " preview");
             imageArea.Children.Add(fallback); imageArea.Children.Add(image); panel.Children.Add(imageArea); previews.Add((image, hit.ThumbnailUrl ?? hit.IconUrl ?? hit.Gallery.FirstOrDefault(), fallback));
-            panel.Children.Add(Button(hit.Title, "Details for " + hit.Title, async (_, _) => await DetailsAsync(hit)));
+            var titleButton = Button(hit.Title, "Details for " + hit.Title, async (_, _) => await DetailsAsync(hit));
+            titleButton.FontSize = 18; titleButton.FontWeight = FontWeights.SemiBold; titleButton.HorizontalContentAlignment = HorizontalAlignment.Left; titleButton.Content = Text(hit.Title, 18);
+            panel.Children.Add(titleButton);
             if (hit.Author is not null) panel.Children.Add(Text("by " + hit.Author));
             var description = Text(hit.Description); description.MaxHeight = 54; description.TextTrimming = TextTrimming.CharacterEllipsis; description.ToolTip = hit.Description; panel.Children.Add(description);
             panel.Children.Add(Text("1.8.9" + (hit.Kind == "mod" ? " · Forge" : "") + " · " + string.Join(" · ", hit.Categories.Take(3))));
@@ -201,7 +203,7 @@ public partial class LibraryView : UserControl
         finally
         {
             install.Dispose(); install = null; BusyChanged?.Invoke(false); ContentProgressBar.Visibility = CancelContent.Visibility = Visibility.Collapsed;
-            ImportButton.IsEnabled = CheckUpdatesButton.IsEnabled = ContentKind.IsEnabled = true; UpdateCardStates(); RefreshInstalled();
+            ImportButton.IsEnabled = CheckUpdatesButton.IsEnabled = ContentKind.IsEnabled = true; UpdateCardStates(); RefreshInstalled(); if (active) InstalledButton.Focus();
         }
     }
     private void RefreshInstalled()
@@ -287,10 +289,11 @@ public partial class LibraryView : UserControl
                 summary.Text = (hit.Author is null ? "" : "by " + hit.Author + " · ") + "Modrinth · " + (details.Project.Downloads?.ToString("N0") ?? "Unknown") + " downloads\nLicense: " + (details.Project.License ?? "Not supplied") + "\nSupported versions: " + string.Join(", ", details.Versions);
                 var record = store!.Current.Content.FirstOrDefault(c => c.ProjectId == hit.ProjectId && c.Kind == hit.Kind);
                 panel.Children.Add(Text(record is null ? "Not installed in this profile." : "Installed version: " + record.VersionNumber));
-                var versions = await content.VersionsForDetailsAsync(hit.ProjectId, hit.Kind, source.Token);
-                panel.Children.Add(Text("Latest compatible stable release: " + (versions ?? "Unavailable")));
-                var installButton = Button(record is null ? "INSTALL" : "Check / UPDATE", (record is null ? "Install " : "Update ") + hit.Title, async (_, _) => { dialog.Close(); await CardInstallAsync(hit); });
-                installButton.IsEnabled = !IsMutating; panel.Children.Add(installButton);
+                var latest = await content.LatestVersionAsync(hit.ProjectId, hit.Kind, source.Token);
+                panel.Children.Add(Text("Latest compatible stable release: " + (latest?.Number ?? "Unavailable")));
+                var canUpdate = record is not null && latest is not null && latest.Id != record.VersionId && latest.Published > record.Published;
+                var installButton = Button(record is null ? "INSTALL" : canUpdate ? "UPDATE" : "INSTALLED", (record is null ? "Install " : canUpdate ? "Update " : "Installed ") + hit.Title, async (_, _) => { dialog.Close(); await CardInstallAsync(hit); });
+                installButton.IsEnabled = !IsMutating && (record is null || canUpdate); panel.Children.Add(installButton);
                 panel.Children.Add(Button("Open provider page", "Open Modrinth page for " + hit.Title, (_, _) => Process.Start(new ProcessStartInfo("https://modrinth.com/" + hit.Kind + "/" + Uri.EscapeDataString(hit.ProjectId)) { UseShellExecute = true })));
                 // Provider body is text, never active HTML/scripts in the launcher.
                 panel.Children.Add(Text(details.Body.Length > 24000 ? details.Body[..24000] + "\nRead the full description on Modrinth." : details.Body));
@@ -304,7 +307,7 @@ public partial class LibraryView : UserControl
             catch (OperationCanceledException) { }
             catch (Exception ex) { if (!source.IsCancellationRequested) summary.Text = "Unable to load details: " + ex.Message + ". Close and retry; installed content is available offline."; }
         }
-        var loading = Load(); dialog.ShowDialog(); await loading; ContentQuery.Focus();
+        var loading = Load(); dialog.ShowDialog(); await loading; if (Discover) ContentQuery.Focus(); else if (FavoritesButton.IsChecked == true) FavoritesButton.Focus(); else InstalledButton.Focus();
     }
     private Window CreateDialog(string title, StackPanel panel)
     {

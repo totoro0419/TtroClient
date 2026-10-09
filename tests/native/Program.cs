@@ -23,6 +23,9 @@ try
  var candidate = store.Catalog.First(m => m!["status"]!.GetValue<string>() == "candidate")!["id"]!.GetValue<string>();
  Reject(() => store.SetValue(candidate, "enabled", JsonValue.Create(true)!), "candidate cannot masquerade as working");
  store.GameRunning = true; Reject(() => store.Add("unsafe"), "running game blocks profile edits"); store.GameRunning = false;
+ var config = Path.Combine(root, "auth-settings.json");
+ File.WriteAllText(config, "{\"microsoftClientId\":\"00000000-0000-0000-0000-000000000000\"}");
+ var auth = new AuthService(root, config); Check(!auth.Configured, "empty GUID cannot configure Microsoft authentication");
  var content = new ContentService(store);
  var a = Zip("a.zip", new() { ["pack.mcmeta"] = "{\"pack\":{\"pack_format\":1,\"description\":\"A\"}}" });
  var b = Zip("b.zip", new() { ["pack.mcmeta"] = "{\"pack\":{\"pack_format\":1,\"description\":\"B\"}}" });

@@ -19,11 +19,17 @@ try {
  $transform = $window.GetCurrentPattern([System.Windows.Automation.TransformPattern]::Pattern)
  $transform.Resize(760,620); Start-Sleep -Milliseconds 500
  Check ($window.Current.BoundingRectangle.Width -ge 620) 'window resize preserves minimum layout'
- $play = FindId 'PlayButton'; $play.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
- Start-Sleep -Milliseconds 700
- $status = FindId 'Status'
- Check ($status.Current.Name -like '*registered Ttro Client application ID*') 'missing OAuth configuration is visible, no offline success'
- Check ((FindId 'Workspace').Current.IsEnabled) 'UI recovers after authentication error'
+ $config = Get-Content -Raw (Join-Path (Split-Path $exe) 'launcher-settings.json') | ConvertFrom-Json
+ if ([string]::IsNullOrWhiteSpace($config.microsoftClientId)) {
+  $play = FindId 'PlayButton'; $play.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+  Start-Sleep -Milliseconds 700
+  $status = FindId 'Status'
+  Check ($status.Current.Name -like '*registered Ttro Client application ID*') 'missing OAuth configuration is visible, no offline success'
+  Check ((FindId 'Workspace').Current.IsEnabled) 'UI recovers after authentication error'
+ } else {
+  Check ([guid]$config.microsoftClientId -ne [guid]::Empty) 'packaged public client ID is configured'
+  Check ((FindId 'LoginButton').Current.IsEnabled) 'configured sign-in control is available; actual login requires owner QA'
+ }
  $library = FindName 'LIBRARY'; $library.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select()
  $expander = FindName 'Profile and performance'; $expander.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern).Expand()
  (FindId 'ProfileName').GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue('Windows CI QA')

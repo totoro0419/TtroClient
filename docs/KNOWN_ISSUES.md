@@ -14,7 +14,7 @@ Status: **Development Alpha / public download blocked** (2026-10-09).
 - 19候補機能は未実装。未実装を完成済みとは表示しない。
 - Windows Code Signingなし。SmartScreen警告の可能性。
 - 125/150/200% DPI、screen reader、物理マウス、全言語のScoreboard、追加Mod GUI互換は未検証。
-- Contentの差分Updateと旧Python Profile自動移行は未実装。
+- Managed Contentの互換版更新は実装・検証済み（全ファイル置換、binary差分転送はなし）。Local Importは自動Updateしない。旧Python Profile自動移行は未実装。
 - 複数Installer版のWindows registry/Uninstall管理と旧版削除は不完全。保存済みユーザーデータ保護を優先。
 - 依存Modやオンライン外部データの取得に失敗すると、UI表示や一部連携が利用できない場合がある。
 

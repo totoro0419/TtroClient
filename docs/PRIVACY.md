@@ -17,3 +17,6 @@ Ttro Client独自の任意Telemetry・広告プロファイリング機能を今
 LauncherのProfile、World、Resource Packs、Screenshot、設定、ログ等はユーザー環境内に保持されます。通常Uninstallではユーザーデータを自動削除しない設計です。データを削除する場合はバックアップを取得し、本人が保存先を確認してください。
 
 安全性、個人情報、ログの不備を見つけた場合は [GitHub Issues](https://github.com/totoro0419/TtroClient/issues) に**実Tokenを掲載せず**報告してください。
+## Content Library
+
+Discoverを開くとModrinthへ検索・version・画像を要求します。検索文字列はproviderへ送信されます。FavoritesはPC内だけに保存し、Ttroアカウントや独自サーバーは不要です。画像はメモリ16MiB/48件、ディスク32MiB/128件の上限で一時保存します。Modrinthは第三者サービスです。InstalledのON/OFF・優先順位・Local Import・削除は接続なしで使用できます。Managedの更新・削除時にはユーザーローカルのbackupsを保持します。

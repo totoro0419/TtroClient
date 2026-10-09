@@ -1,0 +1,61 @@
+{
+  "sourceCommit": "f34962a5854e18ebbd93e2db56b01473a313150f",
+  "ciRun": "https://github.com/totoro0419/TtroClient/actions/runs/37907966762",
+  "ci": {
+    "client": "success",
+    "windows": "success",
+    "game": "success",
+    "web": "success"
+  },
+  "nativePackProvenance": {
+    "source": "Shipping native ContentService.InstallProjectAsync / deterministic provider fixture",
+    "records": [
+      {
+        "Provider": "modrinth",
+        "ProjectId": "qa-low",
+        "VersionId": "qa-lowv1",
+        "VersionNumber": "1",
+        "Published": "2026-10-09T00:00:00+00:00",
+        "Kind": "resourcepack",
+        "Title": "qa-low",
+        "File": "qa-pack-low.zip",
+        "Sha512": "fb673fd643108d3f7435cd87a22930e4a159e00356648bf89849dd2f9f597a75db312c52d1a502d1afcd40cd1e65a3e5a5b401d694265522ed9fd3c886510af4",
+        "RequiredVersions": []
+      },
+      {
+        "Provider": "modrinth",
+        "ProjectId": "qa-high",
+        "VersionId": "qa-highv1",
+        "VersionNumber": "1",
+        "Published": "2026-10-09T00:00:00+00:00",
+        "Kind": "resourcepack",
+        "Title": "qa-high",
+        "File": "qa-pack-high.zip",
+        "Sha512": "bc7967770f3ffd49f0044fa6470df9f319f214cb21096309a456eb894e04fec92e00e43a140c43159f2d92b84ab77943e3664ca3e1ceba7b9b03aafd1350ea79",
+        "RequiredVersions": []
+      }
+    ],
+    "packsHighestFirst": [
+      "qa-pack-high.zip",
+      "qa-pack-low.zip"
+    ],
+    "options": "resourcePacks:[\"qa-pack-low.zip\",\"qa-pack-high.zip\"]\n",
+    "limitations": "QA fixture download transport; no authentication bypass in product"
+  },
+  "gamePackChecks": [
+    {
+      "name": "local Forge world joined",
+      "status": "PASS"
+    },
+    {
+      "name": "Launcher pack order consumed by real Minecraft",
+      "status": "PASS"
+    },
+    {
+      "name": "two resource packs enabled in Minecraft",
+      "status": "PASS"
+    }
+  ],
+  "packagedMicrosoftClientId": "",
+  "authenticatedLoginPlay": "NOT_EXECUTED"
+}

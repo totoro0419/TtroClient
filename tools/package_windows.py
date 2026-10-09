@@ -4,6 +4,8 @@ from pathlib import Path
 root=Path(__file__).resolve().parents[1]
 p=argparse.ArgumentParser(); p.add_argument('--makensis',default='makensis'); args=p.parse_args()
 product=json.loads((root/'launcher/product.json').read_text()); portable=root/'dist/portable'
+source=os.environ.get('GITHUB_SHA') or subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip()
+(portable/'build-info.json').write_text(json.dumps({'repository':'totoro0419/TtroClient','sourceCommit':source,'ciRunId':os.environ.get('GITHUB_RUN_ID'),'version':product['version']},indent=2))
 assert (portable/'TtroClient.exe').read_bytes()[:2]==b'MZ', 'Windows launcher missing'
 manifest=json.loads((portable/'payload/client-manifest.json').read_text())
 client=portable/'payload'/manifest['filename']

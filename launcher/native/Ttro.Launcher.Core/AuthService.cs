@@ -2,9 +2,12 @@ using CmlLib.Core.Auth;
 using CmlLib.Core.Auth.Microsoft;
 using CmlLib.Core.Auth.Microsoft.Sessions;
 using Microsoft.Identity.Client;
+using XboxAuthNet.Game;
 using XboxAuthNet.Game.Accounts;
 using XboxAuthNet.Game.Msal;
 using XboxAuthNet.Game.Msal.OAuth;
+using XboxAuthNet.Game.Authenticators;
+using XboxAuthNet.Game.XboxAuth;
 using System.Text.Json.Nodes;
 
 namespace Ttro.Launcher.Core;
@@ -12,6 +15,8 @@ namespace Ttro.Launcher.Core;
 public sealed class AuthService(string root, string settingsPath)
 {
     private JELoginHandler? handler;
+    private MsalOAuthBuilder? oauth;
+    private IAuthenticationProvider? xbox;
     public MSession? Session { get; private set; }
     public string ClientId
     {
@@ -33,19 +38,27 @@ public sealed class AuthService(string root, string settingsPath)
         var authDir = Path.Combine(root, "auth"); Directory.CreateDirectory(authDir);
         var properties = new Microsoft.Identity.Client.Extensions.Msal.StorageCreationPropertiesBuilder("msal.cache", authDir).Build();
         await MsalClientHelper.RegisterCache(app, properties);
+        oauth = new MsalOAuthBuilder(app); xbox = new BasicXboxProvider(JELoginHandler.RelyingParty);
         handler = new JELoginHandlerBuilder()
-            .WithOAuthProvider(new MsalCodeFlowProvider(app))
+            .WithOAuthProvider(new MsalCodeFlowProvider(oauth))
+            .WithXboxAuthProvider(xbox)
             .WithAccountManager(new InMemoryXboxGameAccountManager(JEGameAccount.FromSessionStorage))
             .Build();
         return handler;
     }
-    public async Task<MSession> LoginAsync(CancellationToken ct)
+    public Task<MSession> LoginAsync(CancellationToken ct) => AuthenticateAsync(true, ct);
+    public Task<MSession> RefreshAsync(CancellationToken ct) => AuthenticateAsync(false, ct);
+    private async Task<MSession> AuthenticateAsync(bool interactive, CancellationToken ct)
     {
-        var h = await HandlerAsync(); Session = await h.AuthenticateInteractively(ct); return Session;
-    }
-    public async Task<MSession> RefreshAsync(CancellationToken ct)
-    {
-        var h = await HandlerAsync(); Session = await h.Authenticate(ct); return Session;
+        var h = await HandlerAsync();
+        var authenticator = interactive ? h.CreateAuthenticatorWithNewAccount(ct) : h.CreateAuthenticatorWithDefaultAccount(ct);
+        authenticator.AddAuthenticatorWithoutValidator(interactive ? oauth!.SystemBrowser() : oauth!.Silent());
+        authenticator.AddAuthenticatorWithoutValidator(xbox!.Authenticate());
+        // The library's convenience login checks a JE profile but does not enable
+        // the separate entitlement checker. Require both on every Login and PLAY.
+        authenticator.AddForceJEAuthenticator(builder => builder.WithGameOwnershipChecker().Build());
+        Session = null; var verified = await authenticator.ExecuteForLauncherAsync(); ct.ThrowIfCancellationRequested();
+        Session = verified; return verified;
     }
     public async Task SignOutAsync() { if (handler is not null) await handler.Signout(); Session = null; }
 }
