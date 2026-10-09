@@ -21,7 +21,7 @@ Metadata uses bounded cache and serialized requests. Previews are loaded for vis
 - Real Minecraft 1.8.9 / Forge / Java8: 57 stack checks PASS; includes Local World and two enabled Pack priority. Native shipping ContentService downloaded/validated QA packs and generated game options; Minecraft Resource Manager consumed the highest-priority texture. Source/provenance in `research/content-integration-evidence.json`. This uses QA launch and fixture transport, not authenticated consumer PLAY.
 - Existing native Windows UI, Setup/install/uninstall/data retention, Client/Forge, original Mouse Tweaks comparison and responsive website tests remain active. Setup/Portable/JAR/checksums and bundled notices were independently inspected for this CI; no test host/provider is shipped.
 
-UI screenshots were inspected. The 620px view's expanded controls consumed too much card space; filters were collapsed and the search/sort layout reduced. Automation now requires an actual visible INSTALL after scrolling, rather than only an enabled offscreen control. Native screen-reader names and keyboard semantics are applied; Narrator, high DPI/text-scale and physical mouse are not certified.
+UI screenshots were inspected. The 620px view's expanded controls consumed too much card space; filters were collapsed and the search/sort layout reduced. Library uses one scrolling surface so short windows cannot collapse the card area. Automation requires the entire INSTALL bounding rectangle inside the viewport after scrolling; IsOffscreen alone was insufficient. Starting an install scrolls to visible progress/cancel. Native screen-reader names and keyboard semantics are applied; Narrator, high DPI/text-scale and physical mouse are not certified.
 
 ## Public release gate
 

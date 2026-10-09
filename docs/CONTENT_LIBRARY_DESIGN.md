@@ -23,6 +23,7 @@ Read `ui-implementation-quality` v0.3 SKILL.md, pattern selection, review pipeli
 - INSTALL means install and enable, highest priority for a new pack; UI states the consequence. UPDATE preserves ON/OFF and existing priority. Resource Packs changes apply next launch.
 - Installed: local/managed identity, version/file, enabled state, priority, move up/down, preview/details/update/remove. Non-drag buttons provide both pointer and keyboard reordering; no unnecessary drag interaction.
 - Progress reports download bytes when available, verification/commit as indeterminate stages. Cancel works before the short commit; incomplete work never reports installed.
+- One scrolling surface preserves reachable cards in short windows; install moves to visible progress/cancel. Narrow-window QA checks full button bounds in the viewport.
 - Search debounces 400 ms, cancels superseded work and rejects stale profile/kind responses. 12-item pages; no startup content queries or continuous polling. Explicit compatible-update checks.
 - Preview: viewport-triggered request, cancel on view change/unload, maximum 3 downloads, 2 MiB per image, decode 640×360, memory 16 MiB/48 entries, disk 32 MiB/128 entries. Gallery fetched only when details opens, capped at 4 images. Cache failure cannot disable install.
 - Modrinth JSON cache: 32 entries / 2 minutes, bounded metadata response, serialized calls and rate-limit retry messaging. Previously readable results are explicitly labeled stale on connection errors.

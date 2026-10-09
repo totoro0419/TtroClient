@@ -194,7 +194,7 @@ public partial class LibraryView : UserControl
     private async Task MutateAsync(Func<CancellationToken, Task> action, string success)
     {
         if (IsMutating || !initialized) return;
-        install = new(); BusyChanged?.Invoke(true); ContentProgressBar.Visibility = CancelContent.Visibility = Visibility.Visible;
+        install = new(); LibraryScroll.ScrollToTop(); BusyChanged?.Invoke(true); ContentProgressBar.Visibility = CancelContent.Visibility = Visibility.Visible;
         ContentProgressBar.IsIndeterminate = true; ImportButton.IsEnabled = CheckUpdatesButton.IsEnabled = ContentKind.IsEnabled = false;
         UpdateCardStates(); RefreshInstalled();
         try { await action(install.Token); updates.Clear(); LibraryStatus.Text = success + " Changes apply on the next launch."; Changed?.Invoke(LibraryStatus.Text); }
@@ -330,7 +330,7 @@ public partial class LibraryView : UserControl
     private void CardsSizeChanged(object sender, SizeChangedEventArgs e) => ResizeCards();
     private void ResizeCards()
     {
-        var available = Math.Max(270, LibraryScroll.ActualWidth - 22); var columns = Math.Max(1, (int)(available / 285));
+        var available = Math.Max(250, Cards.ActualWidth); var columns = Math.Max(1, (int)(available / 285));
         foreach (FrameworkElement card in Cards.Children) card.Width = Math.Max(250, available / columns - 12);
     }
     private void ScrollChanged(object sender, ScrollChangedEventArgs e) => LoadVisiblePreviews();

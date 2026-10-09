@@ -51,9 +51,10 @@ try {
  WaitFor { $null -ne (FindName 'Install QA pack1') } 'retry restores browse'
  $transform=$window.GetCurrentPattern([System.Windows.Automation.TransformPattern]::Pattern)
  $transform.Resize(620,620); Start-Sleep -Milliseconds 400
- $scroll=(FindId 'LibraryScroll').GetCurrentPattern([System.Windows.Automation.ScrollPattern]::Pattern)
- for ($i=0; $i -lt 10 -and (FindName 'Install QA pack1').Current.IsOffscreen; $i++) { $scroll.Scroll([System.Windows.Automation.ScrollAmount]::NoAmount,[System.Windows.Automation.ScrollAmount]::SmallIncrement); Start-Sleep -Milliseconds 80 }
- Check ((FindName 'Install QA pack1').Current.IsEnabled -and !(FindName 'Install QA pack1').Current.IsOffscreen) 'narrow resize retains visible card install after scrolling'
+ $scrollEl=FindId 'LibraryScroll'; $scroll=$scrollEl.GetCurrentPattern([System.Windows.Automation.ScrollPattern]::Pattern)
+ function InstallVisible { $b=(FindName 'Install QA pack1').Current.BoundingRectangle; $v=$scrollEl.Current.BoundingRectangle; return $b.Height -gt 0 -and $b.Top -ge $v.Top -and $b.Bottom -le $v.Bottom -and $b.Left -ge $v.Left -and $b.Right -le $v.Right }
+ for ($i=0; $i -lt 25 -and !(InstallVisible); $i++) { $scroll.Scroll([System.Windows.Automation.ScrollAmount]::NoAmount,[System.Windows.Automation.ScrollAmount]::SmallIncrement); Start-Sleep -Milliseconds 80 }
+ Check ((FindName 'Install QA pack1').Current.IsEnabled -and (InstallVisible)) 'narrow resize retains fully visible card install by viewport coordinates'
  Screenshot 'windows-library-narrow'
  $transform.Resize(960,760); Start-Sleep -Milliseconds 200
  (FindId 'ContentQuery').GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue('pack1')

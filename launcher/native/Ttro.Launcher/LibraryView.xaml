@@ -1,6 +1,7 @@
 <UserControl x:Class="Ttro.Launcher.LibraryView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Loaded="ViewLoaded" Unloaded="ViewUnloaded">
+ <ScrollViewer x:Name="LibraryScroll" AutomationProperties.AutomationId="LibraryScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" ScrollChanged="ScrollChanged">
  <Grid Margin="12">
-  <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+  <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
   <WrapPanel>
    <TextBlock Text="Find your next look." FontSize="25" FontWeight="SemiBold" Margin="4,0,20,8" VerticalAlignment="Center"/>
    <ComboBox x:Name="ContentKind" Width="185" SelectedIndex="0" SelectionChanged="KindChanged" AutomationProperties.Name="Content type"><ComboBoxItem Content="Resource Packs" Tag="resourcepack"/><ComboBoxItem Content="Mods" Tag="mod"/></ComboBox>
@@ -31,11 +32,10 @@
    </Border>
   </StackPanel>
   <Grid Grid.Row="3">
-   <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-   <ScrollViewer x:Name="LibraryScroll" AutomationProperties.AutomationId="LibraryScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" ScrollChanged="ScrollChanged">
+   <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
     <StackPanel><WrapPanel x:Name="Cards" SizeChanged="CardsSizeChanged"/><StackPanel x:Name="InstalledRows" Visibility="Collapsed"/></StackPanel>
-   </ScrollViewer>
    <WrapPanel x:Name="Pagination" Grid.Row="1" HorizontalAlignment="Center"><Button x:Name="PreviousPage" Content="Previous" Click="PreviousClick"/><TextBlock x:Name="PageLabel" Margin="8" VerticalAlignment="Center"/><Button x:Name="NextPage" Content="Next" Click="NextClick"/></WrapPanel>
   </Grid>
  </Grid>
+ </ScrollViewer>
 </UserControl>
