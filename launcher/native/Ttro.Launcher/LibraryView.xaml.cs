@@ -246,10 +246,10 @@ public partial class LibraryView : UserControl
         try { action(); LibraryStatus.Text = message + " Applies on the next launch."; Changed?.Invoke(LibraryStatus.Text); UpdateCardStates(); RefreshInstalled(); InstalledButton.Focus(); }
         catch (Exception ex) { LibraryStatus.Text = ex.Message; Changed?.Invoke(ex.Message); RefreshInstalled(); }
     }
-    private void ImportClick(object sender, RoutedEventArgs e)
+    private async void ImportClick(object sender, RoutedEventArgs e)
     {
         var dialog = new OpenFileDialog { Filter = Kind == "mod" ? "Forge 1.8.9 mod|*.jar" : "Minecraft 1.8.9 resource pack|*.zip" };
-        if (dialog.ShowDialog(Window.GetWindow(this)) == true) Local(() => content!.Import(dialog.FileName, Kind), "Local content imported and validated.");
+        if (dialog.ShowDialog(Window.GetWindow(this)) == true) { var kind = Kind; await MutateAsync(ct => Task.Run(() => { ct.ThrowIfCancellationRequested(); content!.Import(dialog.FileName, kind); }, ct), "Local content imported and validated."); }
     }
     private void RefreshClick(object sender, RoutedEventArgs e) => RefreshInstalled();
     private async void CheckUpdatesClick(object sender, RoutedEventArgs e)

@@ -58,7 +58,7 @@ public partial class MainWindow : Window
  }
  private void Local(Action action)
  {
-  if (!ready) return; try { store!.EnsureEditable(); action(); } catch (Exception ex) { Status.Text = ex.Message; }
+  if (!ready) return; if (Library.IsMutating) { Status.Text = "Wait for content installation to finish."; return; } try { store!.EnsureEditable(); action(); } catch (Exception ex) { Status.Text = ex.Message; }
  }
  private IProgress<string> Feedback() => new Progress<string>(s => { Status.Text = s; if (store!.GameRunning) CancelButton.Visibility = Visibility.Collapsed; });
  private async void LoginClick(object sender, RoutedEventArgs e) => await RunAsync(async ct => { Status.Text = "Opening Microsoft sign-in in your browser…"; var session = await auth!.LoginAsync(ct); Account.Text = "Signed in as " + session.Username; Status.Text = "Signed in. Select a profile and press PLAY."; });

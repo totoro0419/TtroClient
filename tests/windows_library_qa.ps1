@@ -16,7 +16,7 @@ function WaitFor([scriptblock]$predicate, [string]$name) { for ($i=0; $i -lt 80;
 function State { Get-Content -Raw (Join-Path $env:TTRO_LIBRARY_QA_ROOT 'launcher.json') | ConvertFrom-Json }
 function Screenshot([string]$name) { $bounds=$window.Current.BoundingRectangle; $bitmap=[System.Drawing.Bitmap]::new([int]$bounds.Width,[int]$bounds.Height); $g=[System.Drawing.Graphics]::FromImage($bitmap); try { $g.CopyFromScreen([int]$bounds.X,[int]$bounds.Y,0,0,$bitmap.Size); $bitmap.Save((Join-Path $PSScriptRoot "../research/$name.png")) } finally { $g.Dispose(); $bitmap.Dispose() } }
 try {
- for ($i=0; $i -lt 60; $i++) { Start-Sleep -Milliseconds 200; $process.Refresh(); if ($process.HasExited) { throw 'QA host exited' }; if ($process.MainWindowHandle -ne 0) { break } }
+ for ($i=0; $i -lt 60; $i++) { Start-Sleep -Milliseconds 200; $process.Refresh(); if ($process.HasExited) { Get-Content (Join-Path $env:TTRO_LIBRARY_QA_ROOT 'host-error.txt') -ErrorAction SilentlyContinue; throw 'QA host exited' }; if ($process.MainWindowHandle -ne 0) { break } }
  $window=[System.Windows.Automation.AutomationElement]::FromHandle($process.MainWindowHandle)
  New-Item -ItemType Directory -Force (Join-Path $PSScriptRoot '../research') | Out-Null
  WaitFor { $null -ne (FindName 'Install QA pack0') } 'Discover opens with compatible cards without search'

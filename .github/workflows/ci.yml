@@ -97,6 +97,7 @@ jobs:
             dist/ttro-client-1.8.9-*.jar
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: TtroClient-QA-windows
           path: |

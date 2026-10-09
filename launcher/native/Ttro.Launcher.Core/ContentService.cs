@@ -54,6 +54,7 @@ public sealed class ContentService
         if (kind == "resourcepack")
         {
             var e = zip.GetEntry("pack.mcmeta") ?? throw new InvalidDataException("pack.mcmeta is missing at the ZIP root.");
+            if (e.Length > 512 * 1024) throw new InvalidDataException("Pack metadata exceeds the limit.");
             using var r = new StreamReader(e.Open()); var meta = JsonNode.Parse(r.ReadToEnd());
             if (meta?["pack"]?["pack_format"]?.GetValue<int>() != 1) throw new InvalidDataException("This pack is not declared for Minecraft 1.8.9 (pack_format 1).");
         }
@@ -62,9 +63,10 @@ public sealed class ContentService
             if (zip.GetEntry("fabric.mod.json") is not null || zip.GetEntry("META-INF/mods.toml") is not null || zip.GetEntry("quilt.mod.json") is not null) throw new InvalidDataException("This is not a Forge 1.8.9 mod.");
             var meta = zip.GetEntry("mcmod.info");
             if (meta is null && !verifiedUpstreamMetadata) throw new InvalidDataException("A locally imported mod needs Forge 1.8.9 metadata.");
+            if (meta is not null && meta.Length > 512 * 1024) throw new InvalidDataException("Mod metadata exceeds the limit.");
             if (meta is not null) { using var r = new StreamReader(meta.Open()); var text = r.ReadToEnd(); if (text.Contains("\"mousetweaks\"")) throw new InvalidDataException("Mouse Tweaks is already integrated into Ttro Client."); if (!verifiedUpstreamMetadata && !text.Contains("1.8.9")) throw new InvalidDataException("The mod does not declare Minecraft 1.8.9."); }
             var header = new byte[8];
-            foreach (var e in zip.Entries.Where(e => e.FullName.EndsWith(".class"))) { using var stream = e.Open(); if (stream.Read(header, 0, 8) == 8 && header[0] == 0xca && header[1] == 0xfe && header[2] == 0xba && header[3] == 0xbe && (header[6] * 256 + header[7]) > 52) throw new InvalidDataException("This mod requires a newer Java version than Java 8."); }
+            foreach (var e in zip.Entries.Where(e => e.FullName.EndsWith(".class"))) { using var stream = e.Open(); stream.ReadExactly(header); if ( header[0] == 0xca && header[1] == 0xfe && header[2] == 0xba && header[3] == 0xbe && (header[6] * 256 + header[7]) > 52) throw new InvalidDataException("This mod requires a newer Java version than Java 8."); }
         }
     }
     public void Import(string file, string kind)
@@ -126,12 +128,12 @@ public sealed class ContentService
         var profile = store.Current; var result = new Dictionary<string, ContentVersion>();
         foreach (var record in profile.Content.Where(c => c.Kind == kind && c.Provider == provider.Id).ToArray())
         {
-            ct.ThrowIfCancellationRequested(); var versions = await provider.VersionsAsync(record.ProjectId, kind, ct);
+            ct.ThrowIfCancellationRequested(); var versions = await provider.VersionsAsync(record.ProjectId, kind, ct).ConfigureAwait(false);
             var latest = Latest(versions, kind); if (latest is not null && latest.Id != record.VersionId && latest.Published > record.Published) result[record.ProjectId] = latest;
         }
         if (store.Current != profile) throw new OperationCanceledException("The profile changed."); return result;
     }
-    public async Task<string?> VersionsForDetailsAsync(string id, string kind, CancellationToken ct) => Latest(await provider.VersionsAsync(id, kind, ct), kind)?.Number;
+    public async Task<string?> VersionsForDetailsAsync(string id, string kind, CancellationToken ct) => Latest(await provider.VersionsAsync(id, kind, ct).ConfigureAwait(false), kind)?.Number;
     private static ContentVersion? Latest(ContentVersion[] versions, string kind) => versions.Where(v => Compatible(v, kind) && v.VersionType == "release").OrderByDescending(v => v.Published).FirstOrDefault();
     public Task InstallProjectAsync(string id, string kind, CancellationToken ct, string? auditedVersion = null) => InstallAsync(id, kind, ct, auditedVersion, false, null);
     public Task InstallAsync(string id, string kind, CancellationToken ct, string? version = null, bool update = false, IProgress<ContentProgress>? progress = null) => InstallCoreAsync(id, kind, ct, version, update, progress);
@@ -157,14 +159,14 @@ public sealed class ContentService
     }
     private async Task InstallCoreAsync(string id, string kind, CancellationToken ct, string? auditedVersion, bool update, IProgress<ContentProgress>? progress)
     {
-        ValidateKind(kind); store.EnsureEditable(); await mutation.WaitAsync(ct);
+        ValidateKind(kind); store.EnsureEditable(); await mutation.WaitAsync(ct).ConfigureAwait(false);
         var profile = store.Current; var staging = Path.Combine(store.GameDirectory(profile), ".content-staging", Guid.NewGuid().ToString("N"));
         try
         {
             var oldMain = profile.Content.SingleOrDefault(c => c.Provider == provider.Id && c.ProjectId == id && c.Kind == kind);
             if (update && oldMain is null) throw new InvalidOperationException("Only provider-managed content can be updated.");
             progress?.Report(new("Checking compatible releases", id));
-            var versions = await provider.VersionsAsync(id, kind, ct);
+            var versions = await provider.VersionsAsync(id, kind, ct).ConfigureAwait(false);
             var v = (auditedVersion is null ? Latest(versions, kind) : versions.FirstOrDefault(x => x.Id == auditedVersion)) ?? throw new InvalidOperationException("No compatible stable 1.8.9 release is available.");
             if (update && oldMain is not null && (v.Id == oldMain.VersionId || v.Published <= oldMain.Published)) return;
             Directory.CreateDirectory(staging); var pending = new List<Pending>(); var seen = new Dictionary<string, string>();
@@ -178,9 +180,9 @@ public sealed class ContentService
                 foreach (var dep in version.Dependencies.Where(d => d.Type == "required"))
                 {
                     if (dep.VersionId is null) throw new InvalidOperationException("The provider has not pinned a required dependency version. No files were changed.");
-                    var dv = await provider.VersionAsync(dep.VersionId, ct);
+                    var dv = await provider.VersionAsync(dep.VersionId, ct).ConfigureAwait(false);
                     if (dv.Id != dep.VersionId || dep.ProjectId is not null && dv.ProjectId != dep.ProjectId) throw new InvalidDataException("Dependency identity mismatch.");
-                    await Stage(dv, "mod", dv.Name);
+                    await Stage(dv, "mod", dv.Name).ConfigureAwait(false);
                 }
                 var f = version.Files.FirstOrDefault(x => x.Primary) ?? (version.Files.Length == 1 ? version.Files[0] : throw new InvalidDataException("Provider has no unambiguous primary file."));
                 var name = ProfileStore.SafeName(f.Filename); if (!name.EndsWith(contentKind == "mod" ? ".jar" : ".zip", StringComparison.OrdinalIgnoreCase)) throw new InvalidDataException("Provider file extension mismatch.");
@@ -196,9 +198,9 @@ public sealed class ContentService
                     if (profile.Content.Any(c => c != old && c.RequiredVersions.Contains(old.VersionId) && !seen.ContainsKey(c.ProjectId))) throw new InvalidOperationException("Another installed mod requires the current pinned dependency. Update its dependent mod first.");
                     if (old.File.EndsWith(".disabled", StringComparison.Ordinal)) name += ".disabled";
                 }
-                var path = Path.Combine(staging, pending.Count + "-download");
+                var path = Path.Combine(staging, pending.Count + "-download"); var lastFeedback = Environment.TickCount64;
                 progress?.Report(new("Downloading", title, 0, f.Size));
-                await DownloadWithAsync(http, uri, path, ct, n => progress?.Report(new("Downloading", title, n, f.Size)));
+                await DownloadWithAsync(http, uri, path, ct, n => { if (n == f.Size || Environment.TickCount64 - lastFeedback >= 100) { lastFeedback = Environment.TickCount64; progress?.Report(new("Downloading", title, n, f.Size)); } }).ConfigureAwait(false);
                 progress?.Report(new("Verifying SHA-512 and archive", title));
                 if (new FileInfo(path).Length != f.Size || Sha512(path) != f.Sha512.ToLowerInvariant()) throw new InvalidDataException("Download hash or size mismatch.");
                 ValidateArchive(path, contentKind, true);
@@ -208,9 +210,9 @@ public sealed class ContentService
             if (v.ProjectId != id && auditedVersion is null)
             {
                 // Slugs are accepted at entry, but persistent identity is always the provider ID.
-                var details = await provider.DetailsAsync(id, kind, ct); if (details.Project.ProjectId != v.ProjectId) throw new InvalidDataException("Project identity mismatch.");
+                var details = await provider.DetailsAsync(id, kind, ct).ConfigureAwait(false); if (details.Project.ProjectId != v.ProjectId) throw new InvalidDataException("Project identity mismatch.");
             }
-            await Stage(v, kind, (await provider.DetailsAsync(v.ProjectId, kind, ct)).Project.Title);
+            await Stage(v, kind, (await provider.DetailsAsync(v.ProjectId, kind, ct).ConfigureAwait(false)).Project.Title).ConfigureAwait(false);
             ct.ThrowIfCancellationRequested(); store.EnsureEditable(); if (store.Current != profile) throw new OperationCanceledException("The profile changed before installation.");
             if (pending.Count == 0) return;
             // Validate all destination collisions before mutating any dependency-group member.
@@ -240,14 +242,16 @@ public sealed class ContentService
             {
                 progress?.Report(new("Installing into " + profile.Name, v.Name));
                 // Cancellation stops before commit. The short synchronous commit is rolled back as a group on failure.
+                var newPacks = profile.Packs.ToList(); var newContent = profile.Content.ToList(); var newManaged = new Dictionary<string, string>(profile.ManagedMods);
                 foreach (var p in pending)
                 {
                     var dest = Path.Combine(DirectoryFor(profile, p.Record.Kind), p.Record.File); Directory.CreateDirectory(Path.GetDirectoryName(dest)!); File.Move(p.Staged, dest, true);
-                    if (p.Old is not null) { profile.Content.Remove(p.Old); if (p.Record.Kind == "resourcepack") { var index = profile.Packs.IndexOf(p.Old.File); if (index >= 0) profile.Packs[index] = p.Record.File; } else profile.ManagedMods.Remove(p.Old.File.Replace(".disabled", "")); }
-                    else if (p.Record.Kind == "resourcepack") profile.Packs.Insert(0, p.Record.File);
-                    if (p.Record.Kind == "mod") profile.ManagedMods[p.Record.File.Replace(".disabled", "")] = ProfileStore.Hash(dest);
-                    profile.Content.Add(p.Record);
+                    if (p.Old is not null) { newContent.Remove(p.Old); if (p.Record.Kind == "resourcepack") { var index = newPacks.IndexOf(p.Old.File); if (index >= 0) newPacks[index] = p.Record.File; } else newManaged.Remove(p.Old.File.Replace(".disabled", "")); }
+                    else if (p.Record.Kind == "resourcepack") newPacks.Insert(0, p.Record.File);
+                    if (p.Record.Kind == "mod") newManaged[p.Record.File.Replace(".disabled", "")] = ProfileStore.Hash(dest);
+                    newContent.Add(p.Record);
                 }
+                profile.Packs = newPacks; profile.Content = newContent; profile.ManagedMods = newManaged;
                 SyncPacks(profile); store.Save(); transaction.Committed = true; ProfileStore.AtomicWrite(journal, JsonSerializer.Serialize(transaction));
             }
             catch { Restore(profile, staging, transaction); throw; }
@@ -300,10 +304,10 @@ public sealed class ContentService
     private static async Task DownloadWithAsync(HttpClient client, Uri uri, string path, CancellationToken ct, Action<long>? progress)
     {
         TrustedDownload(uri.AbsoluteUri);
-        using var response = await client.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead, ct); response.EnsureSuccessStatusCode();
+        using var response = await client.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead, ct).ConfigureAwait(false); response.EnsureSuccessStatusCode();
         if (response.RequestMessage?.RequestUri?.Host != uri.Host || response.Content.Headers.ContentLength > 256L * 1024 * 1024) throw new InvalidDataException("Unsafe redirect or content size.");
-        await using var input = await response.Content.ReadAsStreamAsync(ct); await using var output = File.Create(path); var buffer = new byte[65536]; long total = 0; int n;
-        while ((n = await input.ReadAsync(buffer, ct)) > 0) { total += n; if (total > 256L * 1024 * 1024) throw new InvalidDataException("Download limit exceeded."); await output.WriteAsync(buffer.AsMemory(0, n), ct); progress?.Invoke(total); }
-        await output.FlushAsync(ct);
+        await using var input = await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false); await using var output = File.Create(path); var buffer = new byte[65536]; long total = 0; int n;
+        while ((n = await input.ReadAsync(buffer, ct).ConfigureAwait(false)) > 0) { total += n; if (total > 256L * 1024 * 1024) throw new InvalidDataException("Download limit exceeded."); await output.WriteAsync(buffer.AsMemory(0, n), ct).ConfigureAwait(false); progress?.Invoke(total); }
+        await output.FlushAsync(ct).ConfigureAwait(false);
     }
 }

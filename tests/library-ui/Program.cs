@@ -13,9 +13,16 @@ public static class LibraryQaHost
     [STAThread]
     public static void Main()
     {
-        var app = new App(); app.InitializeComponent(); app.StartupUri = null;
+        try { Run(); }
+        catch (Exception ex) { var root = Environment.GetEnvironmentVariable("TTRO_LIBRARY_QA_ROOT"); if (root is not null) { Directory.CreateDirectory(root); File.WriteAllText(Path.Combine(root, "host-error.txt"), ex.ToString()); } Environment.Exit(1); }
+    }
+    private static void Run()
+    {
+        var app = new Application();
+        app.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("pack://application:,,,/TtroClient;component/Theme.xaml") });
         var root = Environment.GetEnvironmentVariable("TTRO_LIBRARY_QA_ROOT") ?? throw new InvalidOperationException("A scratch QA root is required.");
         var store = new ProfileStore(root, Path.Combine(AppContext.BaseDirectory, "modules.json"));
+        app.DispatcherUnhandledException += (_, e) => { File.WriteAllText(Path.Combine(root, "host-error.txt"), e.Exception.ToString()); e.Handled = true; app.Shutdown(1); };
         var fixture = new ContentFixture(); var service = new ContentService(store, fixture, fixture.Http);
         var library = new LibraryView(); library.Initialize(store, service, new ContentImages(root, fixture.Http));
         var dock = new DockPanel(); var tools = new WrapPanel(); DockPanel.SetDock(tools, Dock.Top); dock.Children.Add(tools);

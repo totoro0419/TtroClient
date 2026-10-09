@@ -22,7 +22,7 @@ public sealed class AuthService(string root, string settingsPath)
             return cid ?? "";
         }
     }
-    public bool Configured => Guid.TryParse(ClientId, out _);
+    public bool Configured => Guid.TryParse(ClientId, out var id) && id != Guid.Empty;
     private async Task<JELoginHandler> HandlerAsync()
     {
         if (handler is not null) return handler;

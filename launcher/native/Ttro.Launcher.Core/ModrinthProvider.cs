@@ -14,13 +14,13 @@ public sealed class ModrinthProvider : IContentProvider
     public ModrinthProvider(HttpClient? client = null) => http = client ?? ContentService.CreateClient();
     private async Task<JsonNode> GetAsync(string path, CancellationToken ct)
     {
-        await gate.WaitAsync(ct);
+        await gate.WaitAsync(ct).ConfigureAwait(false);
         try
         {
             if (cache.TryGetValue(path, out var cached) && DateTimeOffset.UtcNow - cached.Time < TimeSpan.FromMinutes(2)) return JsonNode.Parse(cached.Json)!;
             var wait = nextRequest - DateTimeOffset.UtcNow;
-            if (wait > TimeSpan.Zero) await Task.Delay(wait, ct);
-            using var response = await http.GetAsync("https://api.modrinth.com/v2/" + path, HttpCompletionOption.ResponseHeadersRead, ct);
+            if (wait > TimeSpan.Zero) await Task.Delay(wait, ct).ConfigureAwait(false);
+            using var response = await http.GetAsync("https://api.modrinth.com/v2/" + path, HttpCompletionOption.ResponseHeadersRead, ct).ConfigureAwait(false);
             nextRequest = DateTimeOffset.UtcNow.AddMilliseconds(250);
             if (response.StatusCode == HttpStatusCode.TooManyRequests)
             {
@@ -29,9 +29,9 @@ public sealed class ModrinthProvider : IContentProvider
                 throw new HttpRequestException($"Modrinth request limit reached. Retry in {seconds} seconds.");
             }
             response.EnsureSuccessStatusCode();
-            await using var stream = await response.Content.ReadAsStreamAsync(ct);
+            await using var stream = await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false);
             using var buffer = new MemoryStream(); var block = new byte[65536]; int n;
-            while ((n = await stream.ReadAsync(block, ct)) > 0) { if (buffer.Length + n > 8 * 1024 * 1024) throw new InvalidDataException("Provider response exceeds the metadata limit."); buffer.Write(block, 0, n); }
+            while ((n = await stream.ReadAsync(block, ct).ConfigureAwait(false)) > 0) { if (buffer.Length + n > 8 * 1024 * 1024) throw new InvalidDataException("Provider response exceeds the metadata limit."); buffer.Write(block, 0, n); }
             var json = System.Text.Encoding.UTF8.GetString(buffer.ToArray()); var result = JsonNode.Parse(json) ?? throw new InvalidDataException("Empty provider response.");
             if (cache.Count >= 32) cache.Remove(cache.MinBy(x => x.Value.Time).Key);
             cache[path] = (DateTimeOffset.UtcNow, json); return result;
@@ -57,22 +57,22 @@ public sealed class ModrinthProvider : IContentProvider
         foreach (var tag in new[] { query.Category, query.Resolution }.Where(t => !string.IsNullOrEmpty(t)))
         { if (!tag!.All(c => char.IsAsciiLetterOrDigit(c) || c is '-' or '+')) throw new ArgumentException("Invalid category tag."); facets.Add(["categories:" + tag]); }
         var path = "search?limit=" + query.Limit + "&offset=" + query.Offset + "&index=" + query.Sort + "&query=" + Uri.EscapeDataString(query.Query) + "&facets=" + Uri.EscapeDataString(JsonSerializer.Serialize(facets));
-        var root = await GetAsync(path, ct);
+        var root = await GetAsync(path, ct).ConfigureAwait(false);
         return new(root["hits"]!.AsArray().Where(n => Strings(n!["versions"]).Contains("1.8.9") && n["project_type"]!.GetValue<string>() == query.Kind && (query.Kind != "mod" || Strings(n["categories"]).Contains("forge"))).Select(n => Hit(n!, query.Kind)).ToArray(), query.Offset, root["total_hits"]!.GetValue<int>());
     }
     public async Task<ContentDetails> DetailsAsync(string projectId, string kind, CancellationToken ct)
     {
-        var n = await GetAsync("project/" + Uri.EscapeDataString(projectId), ct);
+        var n = await GetAsync("project/" + Uri.EscapeDataString(projectId), ct).ConfigureAwait(false);
         if (n["project_type"]!.GetValue<string>() != kind) throw new InvalidDataException("Provider project type mismatch.");
         return new(Hit(n, kind, true), n["body"]?.GetValue<string>() ?? "", Strings(n["game_versions"]));
     }
     public async Task<ContentVersion[]> VersionsAsync(string projectId, string kind, CancellationToken ct)
     {
         ContentService.ValidateKind(kind);
-        var n = await GetAsync("project/" + Uri.EscapeDataString(projectId) + "/version?game_versions=%5B%221.8.9%22%5D" + (kind == "mod" ? "&loaders=%5B%22forge%22%5D" : ""), ct);
+        var n = await GetAsync("project/" + Uri.EscapeDataString(projectId) + "/version?game_versions=%5B%221.8.9%22%5D" + (kind == "mod" ? "&loaders=%5B%22forge%22%5D" : ""), ct).ConfigureAwait(false);
         return n.AsArray().Select(v => Version(v!)).Where(v => ContentService.Compatible(v, kind)).OrderByDescending(v => v.Published).ToArray();
     }
-    public async Task<ContentVersion> VersionAsync(string versionId, CancellationToken ct) => Version(await GetAsync("version/" + Uri.EscapeDataString(versionId), ct));
+    public async Task<ContentVersion> VersionAsync(string versionId, CancellationToken ct) => Version(await GetAsync("version/" + Uri.EscapeDataString(versionId), ct).ConfigureAwait(false));
     private static ContentVersion Version(JsonNode n) => new(n["project_id"]!.GetValue<string>(), n["id"]!.GetValue<string>(), n["version_number"]!.GetValue<string>(), n["name"]!.GetValue<string>(), Date(n["date_published"]) ?? throw new InvalidDataException("Invalid release date."), n["version_type"]!.GetValue<string>(), Strings(n["game_versions"]), Strings(n["loaders"]),
         n["files"]!.AsArray().Select(f => new ContentFile(f!["filename"]!.GetValue<string>(), f["url"]!.GetValue<string>(), f["hashes"]?["sha512"]?.GetValue<string>() ?? "", f["size"]!.GetValue<long>(), f["primary"]?.GetValue<bool>() == true)).ToArray(),
         n["dependencies"]!.AsArray().Select(d => new ContentDependency(d!["project_id"]?.GetValue<string>(), d["version_id"]?.GetValue<string>(), d["dependency_type"]!.GetValue<string>())).ToArray());
