@@ -41,7 +41,7 @@ jobs:
           product=json.loads(pathlib.Path('launcher/product.json').read_text())
           tag=os.environ['TAG']
           assert tag == 'v'+product['version'], 'Release tag must match product version exactly'
-          assert re.fullmatch(r'v\\d+\\.\\d+\\.\\d+-alpha\\.\\d+', tag), 'Only alpha tags are supported'
+          assert re.fullmatch(r'v\d+\.\d+\.\d+-alpha\.\d+', tag), 'Only alpha tags are supported'
           with zipfile.ZipFile('release-assets/TtroClient-Portable.zip') as archive:
               config=json.loads(archive.read('launcher-settings.json'))
               client_id=config.get('microsoftClientId','')
