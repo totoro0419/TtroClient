@@ -30,4 +30,6 @@ Python Launcher (`launcher/app.py`) は旧資産と開発検証用。正式Windo
 
 検証: Windows実インストール/アンインストール・native UI/keyboard操作、実Minecraft設定/HUD21 checks、Patcher付きLocal World57 checks、公式Mouse Tweaks9操作比較を確認。Microsoft Login→PLAYと実GPU性能gateは未達です。
 
+一般ユーザー向け: [Installation](docs/INSTALLATION.md)、[Known Issues](docs/KNOWN_ISSUES.md)、[Privacy](docs/PRIVACY.md)、[Changelog](docs/CHANGELOG.md)。
+
 詳細は [監査・統合・QA報告](docs/INTEGRATION_REPORT.md)、[Architecture](docs/ARCHITECTURE.md)、[Catalog](docs/MODULE_CATALOG.md)、[UI品質](docs/UI_DESIGN.md)、[配布手順](docs/RELEASE_PROCESS.md)。License: Ttro MIT、統合Mouse Tweaks BSD-3-Clause。第三者通知は [THIRD_PARTY.md](THIRD_PARTY.md)。Minecraft本体、Forge、OptiFine、Patcher、認証情報を同梱しません。

@@ -73,3 +73,16 @@ Skillによる具体的変更: 成功するまでPLAY/Installの成功表示を�
 GitHub ActionsのWindows desktopでnative Window、760×620 resize、OAuth未設定のerrorと復帰、Profile作成、設定保存、終了を実行。UIAで発見したCheckbox Click依存の保存欠落をChecked/Uncheckedへ変更し、支援技術経由の切替も保存されるよう修正した。OSへのキーボード入力によるSpace切替、Ctrl+K検索focusは再検証PASS。実行画面で一覧OFFに対してContext見出しONが残る不整合も発見し、保存後に同じstateを反映する修正と回帰チェックを追加した。
 
 この結果は実行画面と操作・永続化を組み合わせた証拠であり、125/150/200% DPI、Windows text scaling、長文/多言語、スクリーンリーダー、physical mouse、実Microsoft accountのQAを代替しない。対応する証拠はresearch/current-windows-qa、現版の範囲はINTEGRATION_REPORT.mdへ記載する。
+
+
+## Official Website — 2026-10-09 alpha公開準備改訂
+
+実装環境で利用できる関連Skill `superdesign` の利用手順を読み、既存 `UI_DESIGN.md` のUI Implementation Quality評価項目を適用した。Superdesign CLIによる新規Canvas生成はこの実行環境から完遂できておらず、生成・視覚テスト実行済みとは主張しない。
+
+| Web候補 | 長所 | 欠点 | 判定 |
+|---|---|---|---|
+| A. Light technical + warm amber | 既存WPFの明るさ・Amberブランドを継承。FAQ、SHA256、Alpha制限を読みやすく提示 | 強いゲーム感は控えめ | **採用** |
+| B. Dark esports neon | ファーストビューの視覚的インパクト | 未実装機能を派手に演出しやすく、アクセシビリティとLauncherブランドの一致が弱い | 不採用 |
+| C. Documentation-first plain | 初心者向けに情報を詳細表示 | ダウンロードCTAが目立たず、プレイヤー向けサイトとして単調 | 不採用 |
+
+実際の更新: Heroの未検証性能暗示を廃止し、正しい1.8.9/Windows/Development Alpha表記へ変更。Download CTAのunpublished / network-error / published alphaを区別。タブ順では無効リンクを除外。Published & prerelease & strict alpha tag & canonical same-release assetsのすべてを満たすまでDownloadを活性化しない。Features、Download、Changelog、FAQ/Support、GitHubを同じ1-page導線に配置。Mobile headerのflex overflowを縦並びへ変更、320/390/768/1280/1920pxのブラウザQA testを追加。Focus visible、reduced motion、forced colors、aria-live、skip linkは維持する。実Browser QAについては必ず対象commitのCI結果で判定する。
