@@ -1,0 +1,6 @@
+{
+  "name": "ttro-client-dev-tools",
+  "private": true,
+  "scripts": {"test:ui": "node tests/ui.test.cjs"},
+  "devDependencies": {"playwright": "1.58.2"}
+}

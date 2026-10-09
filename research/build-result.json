@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "forgegradle_clean_build": "PASS",
+  "build_system": "ForgeGradle 2.1 / Gradle 2.14.1",
+  "java_target": 8,
+  "artifact": "ttro-client-1.8.9-0.3.0-alpha.1.jar",
+  "sha256": "1145c4680e46dd59927aa6155d9046576e09e69f18209989e93439ef8bac0f63",
+  "api_compile_baseline": "Official Forge 1.8.9-11.15.1.2318 with MCP stable_22",
+  "runtime_target": "Forge 11.15.1.2318",
+  "reobfuscation": "ForgeGradle reobfJar",
+  "network_configuration": "Environment proxy and administered trust store"
+}

@@ -1,0 +1,37 @@
+{
+  "environment": "Windows UI Automation / real WPF Library / deterministic provider",
+  "status": "PASS",
+  "limits": [
+    "Provider is a fixture, not live Modrinth",
+    "No Microsoft Login or Minecraft E2E",
+    "DPI/Narrator/physical input not certified"
+  ],
+  "checks": [
+    "Discover opens with compatible cards without search",
+    "remote preview decoded and displayed before install",
+    "details independently reachable",
+    "single card keyboard activation installs managed pack",
+    "card install enables highest-priority pack",
+    "Minecraft options updated by card install",
+    "card becomes installed without second click",
+    "Installed exposes native enable control",
+    "keyboard disable persists",
+    "managed update CTA appears",
+    "card Update replaces managed version",
+    "Update preserves disabled state",
+    "Update retains prior version backup",
+    "offline Installed enable works",
+    "offline Discover error with Retry",
+    "offline Retry reachable",
+    "retry restores browse",
+    "narrow resize retains reachable card install",
+    "debounced search retrieves compatible cards",
+    "local Favorites retain card install",
+    "clear query restores browse",
+    "install progress exposes cancellation",
+    "cancelled install returns usable state",
+    "cancel does not commit another pack",
+    "profile switch isolates installed library",
+    "Library closes cleanly"
+  ]
+}

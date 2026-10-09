@@ -1,0 +1,23 @@
+buildscript {
+ repositories { mavenCentral(); maven { url 'https://maven.minecraftforge.net' } }
+ dependencies { classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT' }
+}
+apply plugin: 'net.minecraftforge.gradle.forge'
+def product=new groovy.json.JsonSlurper().parse(file('../launcher/product.json'))
+version=product.version
+group='dev.ttro'
+archivesBaseName=product.artifact
+sourceCompatibility=targetCompatibility='1.8'
+minecraft { version='1.8.9-11.15.1.2318-1.8.9'; mappings='stable_22'; runDir='run'; replace '@VERSION@',project.version; replace '@BRAND@',product.name }
+processResources {
+ inputs.property 'version', project.version
+ from(sourceSets.main.resources.srcDirs) { include 'mcmod.info'; expand 'version': project.version }
+ from(sourceSets.main.resources.srcDirs) { exclude 'mcmod.info','product.json','modules.json' }
+ from('../launcher') { include 'product.json','modules.json' }
+}
+jar {
+ manifest { attributes 'FMLCorePlugin':'dev.ttro.LoadingPlugin','FMLCorePluginContainsFMLMod':'true' }
+ from('../LICENSE') { rename { 'LICENSE_TTRO' } }
+ from('../docs/MOUSE_TWEAKS_LICENSE.txt') { rename { 'LICENSE_MOUSE_TWEAKS' } }
+}
+tasks.withType(JavaCompile){options.encoding='UTF-8'}

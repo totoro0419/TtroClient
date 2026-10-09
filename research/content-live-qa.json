@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "environment": "Live Modrinth HTTPS / native .NET",
+  "project": "RRxvWKNC",
+  "File": "LowOnFire_1.8.9.zip",
+  "Sha512": "2899fdb591661d30f1a1da657b18e2252736604158c86b6344f3b47b36d2bf855fa7de436e2ca3fc4e16f638c00b451f5be6aad9c3fece289840c088e25ee028",
+  "checks": [
+    "live 1.8.9 browse supplies preinstall icons",
+    "live search",
+    "provider-tag combat/16x filtering",
+    "live Forge 1.8.9 mod browsing",
+    "live provider resourcepack download/hash/archive/install",
+    "live pack recorded and enabled",
+    "live pack Minecraft options registration",
+    "live details project identity",
+    "audited real Forge mod downloads and validates",
+    "live compatible update query"
+  ],
+  "limits": [
+    "No Microsoft account or Minecraft E2E in this test"
+  ]
+}

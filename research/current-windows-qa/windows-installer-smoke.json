@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "limits": [
+    "No Microsoft account",
+    "No SmartScreen/standard-user certification",
+    "No physical input or hardware performance"
+  ],
+  "checks": [
+    "Silent installation",
+    "Installed native UI automation",
+    "Uninstall removes application",
+    "Uninstall preserves profile store"
+  ],
+  "environment": "Windows GitHub Actions runner"
+}

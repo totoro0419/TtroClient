@@ -1,0 +1,4 @@
+<Project Sdk="Microsoft.NET.Sdk">
+ <PropertyGroup><OutputType>WinExe</OutputType><TargetFramework>net8.0-windows</TargetFramework><UseWPF>true</UseWPF><EnableWindowsTargeting>true</EnableWindowsTargeting><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><StartupObject>LibraryQaHost</StartupObject></PropertyGroup>
+ <ItemGroup><ProjectReference Include="../../launcher/native/Ttro.Launcher/Ttro.Launcher.csproj"/><Compile Include="../native/ContentFixture.cs" Link="ContentFixture.cs"/><Content Include="../../launcher/modules.json" Link="modules.json" CopyToOutputDirectory="PreserveNewest"/></ItemGroup>
+</Project>

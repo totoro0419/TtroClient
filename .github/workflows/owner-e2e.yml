@@ -1,0 +1,43 @@
+name: Owner E2E evidence for exact Windows build
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: 'Successful CI run ID for this exact source'
+        required: true
+      evidence_json:
+        description: 'Actual Windows QA JSON from tools/record_owner_qa.ps1; no tokens'
+        required: true
+permissions:
+  contents: read
+  actions: read
+jobs:
+  evidence:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify the tested CI source
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ inputs.run_id }}
+        run: |
+          [[ "$RUN_ID" =~ ^[0-9]+$ ]]
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN_ID" > run.json
+          python -c 'import json,os; r=json.load(open("run.json")); assert r["conclusion"]=="success" and r["head_sha"]==os.environ["GITHUB_SHA"] and r["path"]==".github/workflows/ci.yml"'
+      - uses: actions/download-artifact@v4
+        with:
+          name: TtroClient-Windows-alpha
+          path: release-assets
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ github.token }}
+      - name: Validate actual owner attestation
+        env:
+          EVIDENCE: ${{ inputs.evidence_json }}
+        run: |
+          python -c 'import os,pathlib; pathlib.Path("owner-e2e.json").write_text(os.environ["EVIDENCE"])'
+          python tools/release_gate.py --report owner-e2e.json --assets release-assets --sha "$GITHUB_SHA" --run-id '${{ inputs.run_id }}'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TtroClient-Owner-E2E
+          path: owner-e2e.json
+          if-no-files-found: error

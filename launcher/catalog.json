@@ -1,0 +1,14 @@
+[
+  {
+    "id": "patcher",
+    "name": "PolyPatcher",
+    "version_id": "iNjGeSxM",
+    "optional": false
+  },
+  {
+    "id": "hypixel-mod-api",
+    "name": "Hypixel Mod API",
+    "version_id": "VtDhN4ZW",
+    "optional": false
+  }
+]

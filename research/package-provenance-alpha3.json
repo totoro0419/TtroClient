@@ -1,0 +1,20 @@
+{
+  "version": "0.3.0-alpha.1",
+  "source_commit": "28fe0d31bc474547cea08c5547b9f8aec6659cb0",
+  "workflow_run": "https://github.com/totoro0419/TtroClient/actions/runs/37855397479",
+  "windows_job": "113578734408",
+  "windows_ui_checks": 13,
+  "installer_smoke": "PASS",
+  "downloaded_asset_sha256": {
+    "TtroClient-Setup.exe": "8a29c0780953f989b513dcc1a711d5cbde450c3a0cd594c2d14d38c910e3c613",
+    "ttro-client-1.8.9-0.3.0-alpha.1.jar": "3a80d91bc3f13fbcf6245a10989b5e171ef6ad426749b0ae8efd5b0a83b157a4",
+    "TtroClient-Portable.zip": "0892003474b49e02011cea30d00479b0113e231791d062fcef46a1701ba1f607"
+  },
+  "local_qa_payload_sha256": "1145c4680e46dd59927aa6155d9046576e09e69f18209989e93439ef8bac0f63",
+  "local_vs_ci_jar_entries_identical": true,
+  "limits": [
+    "No Microsoft login or Launcher PLAY",
+    "No code signing, physical input, or Windows hardware performance",
+    "ZIP metadata makes byte SHA differ across clean builds"
+  ]
+}

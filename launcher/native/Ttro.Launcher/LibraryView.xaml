@@ -1,0 +1,41 @@
+<UserControl x:Class="Ttro.Launcher.LibraryView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Loaded="ViewLoaded" Unloaded="ViewUnloaded">
+ <ScrollViewer x:Name="LibraryScroll" AutomationProperties.AutomationId="LibraryScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" ScrollChanged="ScrollChanged">
+ <Grid Margin="12">
+  <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+  <WrapPanel>
+   <TextBlock Text="Find your next look." FontSize="25" FontWeight="SemiBold" Margin="4,0,20,8" VerticalAlignment="Center"/>
+   <ComboBox x:Name="ContentKind" Width="185" SelectedIndex="0" SelectionChanged="KindChanged" AutomationProperties.Name="Content type"><ComboBoxItem Content="Resource Packs" Tag="resourcepack"/><ComboBoxItem Content="Mods" Tag="mod"/></ComboBox>
+   <Button x:Name="ImportButton" Content="Import local file" Click="ImportClick" ToolTip="ZIP packs or Forge 1.8.9 JAR mods. Files are validated before import."/>
+  </WrapPanel>
+  <WrapPanel Grid.Row="1" Margin="0,0,0,4">
+   <RadioButton x:Name="DiscoverButton" Content="DISCOVER" GroupName="LibrarySection" IsChecked="True" Checked="SectionChanged" Margin="4,8,16,8" AutomationProperties.Name="Discover content"/>
+   <RadioButton x:Name="InstalledButton" Content="INSTALLED" GroupName="LibrarySection" Checked="SectionChanged" Margin="4,8,16,8" AutomationProperties.Name="Installed content"/>
+   <RadioButton x:Name="FavoritesButton" Content="FAVORITES" GroupName="LibrarySection" Checked="SectionChanged" Margin="4,8,16,8" AutomationProperties.Name="Favorite content"/>
+   <TextBlock x:Name="ProfileScope" Margin="4,8" TextWrapping="Wrap"/>
+  </WrapPanel>
+  <StackPanel Grid.Row="2">
+   <StackPanel x:Name="DiscoverTools">
+    <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+     <StackPanel><Label Content="Search Modrinth · Minecraft 1.8.9" Target="{Binding ElementName=ContentQuery}"/><TextBox x:Name="ContentQuery" KeyDown="QueryKeyDown" TextChanged="QueryChanged" AutomationProperties.Name="Search compatible content"/></StackPanel>
+     <StackPanel Grid.Column="1"><Label Content="Sort" Target="{Binding ElementName=Sort}"/><ComboBox x:Name="Sort" Width="175" SelectedIndex="0" SelectionChanged="FilterChanged" AutomationProperties.Name="Content sort"><ComboBoxItem Content="Popular · downloads" Tag="downloads"/><ComboBoxItem Content="Recently updated" Tag="updated"/><ComboBoxItem Content="Newest projects" Tag="newest"/><ComboBoxItem Content="Relevance" Tag="relevance"/></ComboBox></StackPanel>
+    </Grid>
+    <Expander Header="Filters" Margin="4,4" AutomationProperties.Name="Content filters"><WrapPanel>
+     <StackPanel x:Name="PackFilters"><Label Content="Category" Target="{Binding ElementName=Category}"/><ComboBox x:Name="Category" Width="145" SelectedIndex="0" SelectionChanged="FilterChanged" AutomationProperties.Name="Pack category"><ComboBoxItem Content="All categories" Tag=""/><ComboBoxItem Content="Combat / PvP" Tag="combat"/><ComboBoxItem Content="Vanilla-like" Tag="vanilla-like"/><ComboBoxItem Content="Simplistic" Tag="simplistic"/><ComboBoxItem Content="Utility" Tag="utility"/></ComboBox></StackPanel>
+     <StackPanel x:Name="ResolutionFilter"><Label Content="Resolution tag" Target="{Binding ElementName=Resolution}"/><ComboBox x:Name="Resolution" Width="130" SelectedIndex="0" SelectionChanged="FilterChanged" AutomationProperties.Name="Pack resolution tag"><ComboBoxItem Content="All resolutions" Tag=""/><ComboBoxItem Content="16x" Tag="16x"/><ComboBoxItem Content="32x" Tag="32x"/><ComboBoxItem Content="64x" Tag="64x"/><ComboBoxItem Content="128x" Tag="128x"/></ComboBox></StackPanel>
+     <Button Content="Search" Click="SearchClick" VerticalAlignment="Bottom"/><Button Content="Clear filters" Click="ClearClick" VerticalAlignment="Bottom"/>
+    </WrapPanel></Expander>
+   </StackPanel>
+   <WrapPanel x:Name="InstalledTools" Visibility="Collapsed"><Button x:Name="CheckUpdatesButton" Content="Check updates" Click="CheckUpdatesClick"/><Button Content="Refresh installed" Click="RefreshClick"/></WrapPanel>
+   <TextBlock x:Name="ScopeNote" Text="1.8.9 · INSTALL enables at highest priority. Applies on the next launch." TextWrapping="Wrap" Margin="4,4" FontSize="13"/>
+   <Border BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" BorderThickness="1" Padding="8" Margin="4,4,4,8">
+    <DockPanel><Button x:Name="CancelContent" DockPanel.Dock="Right" Content="Cancel" Click="CancelClick" Visibility="Collapsed"/><Button x:Name="RetryButton" DockPanel.Dock="Right" Content="Retry" Click="SearchClick" Visibility="Collapsed"/><StackPanel><TextBlock x:Name="LibraryStatus" Text="Browse compatible content without entering a search." TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"/><ProgressBar x:Name="ContentProgressBar" Height="5" Margin="0,6,0,0" IsIndeterminate="True" Visibility="Collapsed" AutomationProperties.Name="Content operation progress"/></StackPanel></DockPanel>
+   </Border>
+  </StackPanel>
+  <Grid Grid.Row="3">
+   <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+    <StackPanel><WrapPanel x:Name="Cards" SizeChanged="CardsSizeChanged"/><StackPanel x:Name="InstalledRows" Visibility="Collapsed"/></StackPanel>
+   <WrapPanel x:Name="Pagination" Grid.Row="1" HorizontalAlignment="Center"><Button x:Name="PreviousPage" Content="Previous" Click="PreviousClick"/><TextBlock x:Name="PageLabel" Margin="8" VerticalAlignment="Center"/><Button x:Name="NextPage" Content="Next" Click="NextClick"/></WrapPanel>
+  </Grid>
+ </Grid>
+ </ScrollViewer>
+</UserControl>

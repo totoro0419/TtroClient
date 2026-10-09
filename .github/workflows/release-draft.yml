@@ -1,0 +1,76 @@
+name: Prepare reviewed alpha release draft
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: 'Successful Build and verify workflow run ID for this exact commit'
+        required: true
+      tag:
+        description: 'New alpha tag, for example v0.3.0-alpha.1'
+        required: true
+      owner_qa_run_id:
+        description: 'Successful Owner E2E evidence workflow run for this exact distribution'
+        required: true
+permissions:
+  contents: write
+  actions: read
+jobs:
+  draft:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify successful CI and exact source commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ inputs.run_id }}
+          TAG: ${{ inputs.tag }}
+          OWNER_RUN_ID: ${{ inputs.owner_qa_run_id }}
+        run: |
+          [[ "$RUN_ID" =~ ^[0-9]+$ ]]
+          [[ "$OWNER_RUN_ID" =~ ^[0-9]+$ ]]
+          [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-alpha\.[0-9]+$ ]]
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN_ID" > run.json
+          python -c 'import json,os; r=json.load(open("run.json")); assert r["conclusion"]=="success" and r["head_sha"]==os.environ["GITHUB_SHA"] and r["event"] in ("push","workflow_dispatch") and r["path"]==".github/workflows/ci.yml"'
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$OWNER_RUN_ID" > owner-run.json
+          python -c 'import json,os; r=json.load(open("owner-run.json")); assert r["conclusion"]=="success" and r["head_sha"]==os.environ["GITHUB_SHA"] and r["event"]=="workflow_dispatch" and r["path"]==".github/workflows/owner-e2e.yml"'
+      - uses: actions/download-artifact@v4
+        with:
+          name: TtroClient-Windows-alpha
+          path: release-assets
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: TtroClient-Owner-E2E
+          path: owner-evidence
+          run-id: ${{ inputs.owner_qa_run_id }}
+          github-token: ${{ github.token }}
+      - name: Enforce authenticated Windows E2E gate
+        run: python tools/release_gate.py --report owner-evidence/owner-e2e.json --assets release-assets --sha "$GITHUB_SHA" --run-id '${{ inputs.run_id }}'
+      - name: Reject unconfigured or mismatched consumer distribution
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          python - <<'PY'
+          import json, os, pathlib, re, uuid, zipfile
+          product=json.loads(pathlib.Path('launcher/product.json').read_text())
+          tag=os.environ['TAG']
+          assert tag == 'v'+product['version'], 'Release tag must match product version exactly'
+          assert re.fullmatch(r'v\d+\.\d+\.\d+-alpha\.\d+', tag), 'Only alpha tags are supported'
+          with zipfile.ZipFile('release-assets/TtroClient-Portable.zip') as archive:
+              config=json.loads(archive.read('launcher-settings.json'))
+              client_id=config.get('microsoftClientId','')
+              assert uuid.UUID(client_id).int != 0, 'Ttro Microsoft app registration is required; never release a blank-ID launcher'
+              manifest=json.loads(archive.read('payload/client-manifest.json'))
+              assert product['version'] in manifest['filename'], 'Client JAR version mismatch'
+              assert archive.read('payload/'+manifest['filename']), 'Client JAR is missing'
+          print('Release-ready configuration present. This does NOT prove Microsoft Login or gameplay QA.')
+          PY
+      - name: Create draft only; publication remains manual
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          cd release-assets
+          sha256sum --check checksums.txt
+          gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "Ttro Client $TAG" --draft --prerelease --notes-file ../docs/RELEASE_NOTES.md ./*
