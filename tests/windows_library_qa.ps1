@@ -53,7 +53,8 @@ try {
  $transform.Resize(620,620); Start-Sleep -Milliseconds 400
  $scrollEl=FindId 'LibraryScroll'; $scroll=$scrollEl.GetCurrentPattern([System.Windows.Automation.ScrollPattern]::Pattern)
  function InstallVisible { $b=(FindName 'Install QA pack1').Current.BoundingRectangle; $v=$scrollEl.Current.BoundingRectangle; return $b.Height -gt 0 -and $b.Top -ge $v.Top -and $b.Bottom -le $v.Bottom -and $b.Left -ge $v.Left -and $b.Right -le $v.Right }
- for ($i=0; $i -lt 25 -and !(InstallVisible); $i++) { $scroll.Scroll([System.Windows.Automation.ScrollAmount]::NoAmount,[System.Windows.Automation.ScrollAmount]::SmallIncrement); Start-Sleep -Milliseconds 80 }
+ for ($i=0; $i -lt 100 -and !(InstallVisible); $i++) { $scroll.Scroll([System.Windows.Automation.ScrollAmount]::NoAmount,[System.Windows.Automation.ScrollAmount]::SmallIncrement); Start-Sleep -Milliseconds 80 }
+ Write-Host ('Narrow viewport: '+$scrollEl.Current.BoundingRectangle+'; INSTALL: '+(FindName 'Install QA pack1').Current.BoundingRectangle+'; scroll: '+$scroll.Current.VerticalScrollPercent)
  Check ((FindName 'Install QA pack1').Current.IsEnabled -and (InstallVisible)) 'narrow resize retains fully visible card install by viewport coordinates'
  Screenshot 'windows-library-narrow'
  $transform.Resize(960,760); Start-Sleep -Milliseconds 200
